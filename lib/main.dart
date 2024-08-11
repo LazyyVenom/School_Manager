@@ -5,8 +5,6 @@ void main() {
   runApp(const SchoolManagerApp());
 }
 
-// need to start working soon
-
 class SchoolManagerApp extends StatelessWidget {
   const SchoolManagerApp({super.key});
 
