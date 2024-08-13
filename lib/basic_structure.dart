@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/alert_page.dart';
+import 'package:school_manager/assignment_page.dart';
+import 'package:school_manager/attendance_page.dart';
+import 'package:school_manager/home_page.dart';
 
 class BasicStructure extends StatefulWidget {
   const BasicStructure({
@@ -11,7 +15,12 @@ class BasicStructure extends StatefulWidget {
 
 class _BasicStructureState extends State<BasicStructure> {
   int currentPage = 0;
-  List<Widget> pages = const [];
+  List<Widget> pages = const [
+    HomePage(),
+    AlertPage(),
+    AssignmentPage(),
+    AttendancePage()
+  ];
 
   @override
   void initState() {
