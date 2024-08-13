@@ -6,12 +6,13 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              height: 57,
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 95,
+              width: double.infinity,
               child: Card(
                 color: const Color.fromARGB(255, 207, 203, 214),
                 child: Padding(
@@ -31,9 +32,23 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 6),
+            Text(
+              "Recent Activities",
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 6),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 60,
+                itemBuilder:(context, index) {
+                  return const Text("Bos");
+                },
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
-}  
+}
