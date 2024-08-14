@@ -78,7 +78,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 6),
             Expanded(
               child: ListView.builder(
-                itemCount: 60,
+                itemCount: 15,
                 itemBuilder:(context, index) {
                   return Padding(
                     padding: const EdgeInsets.all(5.0),
