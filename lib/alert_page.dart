@@ -29,6 +29,7 @@ class AlertPage extends StatelessWidget {
                         padding: const EdgeInsets.all(1),
                         color: Colors.deepPurple[50],
                         child: ListTile(
+                          leading: Icon(Icons.add_alert, color: Colors.deepPurple[300],),
                           title: Text("Home Work for Grade $index "),
                           subtitle:
                               Text("Sent On: Regarding Office Work for $index"),
