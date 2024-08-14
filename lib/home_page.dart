@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
                           padding: const EdgeInsets.all(1),
                           color: Colors.deepPurple[50],
                           child: ListTile(
-                            leading: index % 3 == 0 ? Icon(Icons.book) : Icon(Icons.alarm),
+                            leading: index % 3 == 0 ? Icon(Icons.book, color: Colors.deepPurple[50],) : Icon(Icons.alarm, color: Colors.deepPurple[50],),
                             title: Text("Home Work for Grade $index "),
                             subtitle: Text("Sent On: Regarding Office Work for $index"),
                             trailing: Icon(
