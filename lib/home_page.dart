@@ -33,6 +33,42 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                TextButton(
+                  style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 219, 216, 224))
+                  ),
+                  onPressed: () {
+                  return;
+                }, 
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Change Password"
+                    ),
+                )
+                ),
+                TextButton(
+                  style: const ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 219, 216, 224))
+                  ),
+                  onPressed: () {
+                  return;
+                }, 
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Request Profile Edit"
+                    ),
+                )
+                )
+              ],
+            ),
+            const SizedBox(height: 6),
+            const Divider(),
+            const SizedBox(height: 6),
             Text(
               "Recent Activities",
               style: Theme.of(context).textTheme.headlineSmall,
@@ -42,7 +78,12 @@ class HomePage extends StatelessWidget {
               child: ListView.builder(
                 itemCount: 60,
                 itemBuilder:(context, index) {
-                  return const Text("Bos");
+                  return const ListTile(
+                    enableFeedback: true,
+                    splashColor: Colors.amber,
+                    title: Text("Hello Hii"),
+                    subtitle: Text("Regarding Office Work"),
+                  );
                 },
               ),
             )
