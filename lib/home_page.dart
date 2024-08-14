@@ -63,7 +63,23 @@ class HomePage extends StatelessWidget {
                     "Request Profile Edit"
                     ),
                 )
+                ),
+                TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.red[50]),
+                    foregroundColor: MaterialStatePropertyAll(Colors.red[400]),
+                    overlayColor: MaterialStatePropertyAll(Colors.red[100])
+                  ),
+                  onPressed: () {
+                  return;
+                }, 
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    "Log Out"
+                    ),
                 )
+                ),
               ],
             ),
             const SizedBox(height: 6),
