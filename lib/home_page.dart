@@ -79,8 +79,6 @@ class HomePage extends StatelessWidget {
                 itemCount: 60,
                 itemBuilder:(context, index) {
                   return const ListTile(
-                    enableFeedback: true,
-                    splashColor: Colors.amber,
                     title: Text("Hello Hii"),
                     subtitle: Text("Regarding Office Work"),
                   );
