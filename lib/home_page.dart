@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
               height: 95,
               width: double.infinity,
               child: Card(
-                color: const Color.fromARGB(255, 207, 203, 214),
+                color: Colors.deepPurple[50],
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -37,8 +37,8 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
-                  style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 219, 216, 224))
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.deepPurple[50])
                   ),
                   onPressed: () {
                   return;
@@ -51,8 +51,8 @@ class HomePage extends StatelessWidget {
                 )
                 ),
                 TextButton(
-                  style: const ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Color.fromARGB(255, 219, 216, 224))
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(Colors.deepPurple[50])
                   ),
                   onPressed: () {
                   return;
@@ -74,13 +74,31 @@ class HomePage extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
+            const Divider(),
+            const SizedBox(height: 6),
             Expanded(
               child: ListView.builder(
                 itemCount: 60,
                 itemBuilder:(context, index) {
-                  return const ListTile(
-                    title: Text("Hello Hii"),
-                    subtitle: Text("Regarding Office Work"),
+                  return Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(1),
+                          color: Colors.deepPurple[50],
+                          child: ListTile(
+                            leading: index % 3 == 0 ? Icon(Icons.book) : Icon(Icons.alarm),
+                            title: Text("Home Work for Grade $index "),
+                            subtitle: Text("Sent On: Regarding Office Work for $index"),
+                            trailing: Icon(
+                              Icons.arrow_circle_right,
+                              color: Colors.deepPurple[300],
+                              ),
+                          ),
+                        )
+                      ],
+                    ),
                   );
                 },
               ),
