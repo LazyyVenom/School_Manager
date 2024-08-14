@@ -41,7 +41,7 @@ class _BasicStructureState extends State<BasicStructure> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
+        unselectedItemColor: Colors.deepPurple[100],
         selectedFontSize: 0,
         unselectedFontSize: 0,
         currentIndex: currentPage,
