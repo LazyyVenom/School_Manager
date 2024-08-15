@@ -5,6 +5,11 @@ class AttendancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("Attendance"));
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Column(
+        
+      ),
+    );
   }
 }  
