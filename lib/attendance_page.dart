@@ -5,6 +5,6 @@ class AttendancePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("HELLO Attendance"));
+    return const Center(child: Text("Attendance"));
   }
 }  
