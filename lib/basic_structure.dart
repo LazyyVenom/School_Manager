@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/alert_page.dart';
 import 'package:school_manager/assignment_page.dart';
 import 'package:school_manager/attendance_page.dart';
+import 'package:school_manager/bus_tracking_page.dart';
 import 'package:school_manager/home_page.dart';
 
 class BasicStructure extends StatefulWidget {
