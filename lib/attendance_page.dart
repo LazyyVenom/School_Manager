@@ -20,7 +20,7 @@ class _AttendancePageState extends State<AttendancePage> {
   }
 
   void _generateRandomAttendance() {
-    DateTime firstDay = DateTime.utc(2023, 1, 1);
+    DateTime firstDay = DateTime.utc(2024, 1, 1);
     DateTime lastDay = DateTime.now();
     Random random = Random();
 
@@ -40,6 +40,12 @@ class _AttendancePageState extends State<AttendancePage> {
 
   @override
   Widget build(BuildContext context) {
+    int totalWorkingDays = totalAttendance.length;
+    int totalPresentDays = presentAttendance.length;
+    double attendancePercentage = totalWorkingDays > 0
+        ? (totalPresentDays / totalWorkingDays) * 100
+        : 0.0;
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -71,7 +77,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   return Center(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isPresent ? Colors.green : Colors.red,
+                        color: isPresent ? Colors.green[300] : Colors.red[300],
                         shape: BoxShape.circle,
                       ),
                       width: 35,
@@ -91,10 +97,12 @@ class _AttendancePageState extends State<AttendancePage> {
           const SizedBox(height: 6),
           const Divider(),
           const SizedBox(height: 6),
-          const Text(
-            "Total Working Days: 89\nTotal Attendance: 80\nCurrent Percentage: 89.9%",
-            style: TextStyle(fontSize: 20),
-          )
+          Text(
+            "Total Working Days: $totalWorkingDays\n"
+            "Total Attendance: $totalPresentDays\n"
+            "Current Percentage: ${attendancePercentage.toStringAsFixed(1)}%",
+            style: const TextStyle(fontSize: 20),
+          ),
         ],
       ),
     );
