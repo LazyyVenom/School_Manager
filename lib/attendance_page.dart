@@ -20,7 +20,7 @@ class _AttendancePageState extends State<AttendancePage> {
   }
 
   void _generateRandomAttendance() {
-    DateTime firstDay = DateTime.utc(2024, 1, 1);
+    DateTime firstDay = DateTime.utc(2024, 8, 1);
     DateTime lastDay = DateTime.now();
     Random random = Random();
 
