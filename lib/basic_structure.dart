@@ -18,6 +18,7 @@ class _BasicStructureState extends State<BasicStructure> {
   List<Widget> pages = const [
     HomePage(),
     AlertPage(),
+    BusTrackingPage(),
     AssignmentPage(),
     AttendancePage()
   ];
@@ -60,6 +61,11 @@ class _BasicStructureState extends State<BasicStructure> {
           BottomNavigationBarItem(
             icon: Icon(Icons.add_alert),
             label: "Alert",
+            backgroundColor: Colors.deepPurple
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bus_alert),
+            label: "Bus Tracking",
             backgroundColor: Colors.deepPurple
           ),
           BottomNavigationBarItem(
