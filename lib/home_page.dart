@@ -37,49 +37,42 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.deepPurple[50])
-                  ),
-                  onPressed: () {
-                  return;
-                }, 
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "Change Password"
-                    ),
-                )
-                ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.deepPurple[50])),
+                    onPressed: () {
+                      return;
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Change Password"),
+                    )),
                 TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.deepPurple[50])
-                  ),
-                  onPressed: () {
-                  return;
-                }, 
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "Request Profile Edit"
-                    ),
-                )
-                ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.deepPurple[50])),
+                    onPressed: () {
+                      return;
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Request Profile Edit"),
+                    )),
                 TextButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll(Colors.red[50]),
-                    foregroundColor: MaterialStatePropertyAll(Colors.red[400]),
-                    overlayColor: MaterialStatePropertyAll(Colors.red[100])
-                  ),
-                  onPressed: () {
-                  return;
-                }, 
-                child: const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "Log Out"
-                    ),
-                )
-                ),
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll(Colors.red[50]),
+                        foregroundColor:
+                            MaterialStatePropertyAll(Colors.red[400]),
+                        overlayColor:
+                            MaterialStatePropertyAll(Colors.red[100])),
+                    onPressed: () {
+                      return;
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text("Log Out"),
+                    )),
               ],
             ),
             const SizedBox(height: 6),
@@ -92,17 +85,55 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 6),
             const Divider(),
             const SizedBox(height: 6),
-            const Column(
+            Column(
               children: [
-                Text("Contact Your Class Teacher or School Management"),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Card(
-                      child: Column(
-                        
-                      )
-                    )
+                    Expanded(
+                      child: Card(
+                          color: Colors.deepPurple[50],
+                          child: const Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text("Contact Teacher"),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Icon(
+                                  Icons.chat,
+                                  size: 55,
+                                ),
+                              )
+                            ],
+                          )),
+                    ),
+                    Expanded(
+                      child: Card(
+                        color: Colors.deepPurple[50],
+                        child: const Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Text("Contact Management"),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: Icon(
+                                Icons.chat,
+                                size: 55,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: const Text("Hello Peter")
                 ),
               ],
             ),
