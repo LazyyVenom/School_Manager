@@ -131,10 +131,23 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text("Hello Peter")
+                const SizedBox(
+                  height: 10,
                 ),
+                const Card(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text("Check Your Child's Progress Here"),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.grade_sharp, size: 50,),
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
           ],
