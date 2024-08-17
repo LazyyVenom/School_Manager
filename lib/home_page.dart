@@ -92,7 +92,20 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 6),
             const Divider(),
             const SizedBox(height: 6),
-            
+            const Column(
+              children: [
+                Text("Contact Your Class Teacher or School Management"),
+                Row(
+                  children: [
+                    Card(
+                      child: Column(
+                        
+                      )
+                    )
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       ),

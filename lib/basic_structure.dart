@@ -60,7 +60,7 @@ class _BasicStructureState extends State<BasicStructure> {
             backgroundColor: Colors.deepPurple
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_alert),
+            icon: Icon(Icons.warning),
             label: "Alert",
             backgroundColor: Colors.deepPurple
           ),
