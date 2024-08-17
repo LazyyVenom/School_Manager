@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:school_manager/chatter.dart";
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -93,7 +94,11 @@ class HomePage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context, MaterialPageRoute(builder: (context) => const ChatPage())
+                              );
+                          },
                           child: Card(
                               color: Colors.deepPurple[50],
                               child: const Column(
