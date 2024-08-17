@@ -85,70 +85,92 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 6),
             const Divider(),
             const SizedBox(height: 6),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Card(
-                          color: Colors.deepPurple[50],
-                          child: const Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Text("Contact Teacher"),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                child: Icon(
-                                  Icons.chat,
-                                  size: 55,
-                                ),
-                              )
-                            ],
-                          )),
-                    ),
-                    Expanded(
-                      child: Card(
-                        color: Colors.deepPurple[50],
-                        child: const Column(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Text("Contact Management"),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 8),
-                              child: Icon(
-                                Icons.chat,
-                                size: 55,
-                              ),
-                            ),
-                          ],
+            Expanded(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Card(
+                              color: Colors.deepPurple[50],
+                              child: const Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: Text("Contact Teacher"),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    child: Icon(
+                                      Icons.chat,
+                                      size: 55,
+                                    ),
+                                  )
+                                ],
+                              )),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Card(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Text("Check Your Child's Progress Here"),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Card(
+                            color: Colors.deepPurple[50],
+                            child: const Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text("Contact Management"),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  child: Icon(
+                                    Icons.chat,
+                                    size: 55,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(Icons.grade_sharp, size: 50,),
-                      )
                     ],
                   ),
-                )
-              ],
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Card(
+                            color: Colors.deepPurple[50],
+                            child: const Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child:
+                                      Text("Check Your Child's Progress Here"),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.grade_sharp,
+                                    size: 70,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ],
         ),
