@@ -110,7 +110,7 @@ class HomePage extends StatelessWidget {
                                   Padding(
                                     padding: EdgeInsets.symmetric(vertical: 8),
                                     child: Icon(
-                                      Icons.chat,
+                                      Icons.person,
                                       size: 55,
                                     ),
                                   )
