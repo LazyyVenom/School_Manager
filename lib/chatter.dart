@@ -12,7 +12,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chatting With Teacher"),
+        title: const Text("Messaging Teacher"),
       ),
       body: const Column(),
     );
