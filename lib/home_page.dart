@@ -132,7 +132,7 @@ class HomePage extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: 8),
                                   child: Icon(
-                                    Icons.chat,
+                                    Icons.manage_accounts,
                                     size: 55,
                                   ),
                                 ),
