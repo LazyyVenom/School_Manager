@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/basic_structure.dart';
+// import 'package:school_manager/basic_structure.dart';
+import 'package:school_manager/login_page.dart';
 
 void main() {
   runApp(const SchoolManagerApp());
@@ -30,6 +31,6 @@ class SchoolManager extends StatefulWidget {
 class _SchoolManagerState extends State<SchoolManager> {
   @override
   Widget build(BuildContext context) {
-    return const BasicStructure();
+    return const LoginPage();
   }
 }
