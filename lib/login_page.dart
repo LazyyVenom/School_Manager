@@ -121,6 +121,7 @@ class _LoginPageState extends State<LoginPage> {
       await prefs.setBool('isLoggedIn', true); // Save login state
       await prefs.setString('userRole', _userRole); // Optionally save the role
 
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const BasicStructure()),
