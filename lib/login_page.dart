@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/basic_structure.dart';
 
 class LoginPage extends StatefulWidget {
@@ -110,14 +111,17 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _login() {
+  void _login() async {
     String username = _usernameController.text;
     String password = _passwordController.text;
 
     // Add logic to handle different roles if needed
     if (username.trim() == 'a' && password.trim() == 'a') {
-      // You can check _userRole here and navigate accordingly
-      Navigator.push(
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true); // Save login state
+      await prefs.setString('userRole', _userRole); // Optionally save the role
+
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const BasicStructure()),
       );
