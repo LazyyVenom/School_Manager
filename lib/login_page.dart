@@ -53,12 +53,12 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: _login,
-              child: const Text("Login"),
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 textStyle: const TextStyle(fontSize: 18),
               ),
+              child: const Text("Login"),
             ),
             const SizedBox(height: 16.0),
             TextButton(
@@ -87,8 +87,7 @@ class _LoginPageState extends State<LoginPage> {
             "Incorrect ID Password!",
             style: TextStyle(color: Colors.black),
           ),
-          backgroundColor: Colors.red[200],
-          showCloseIcon: true,
+          backgroundColor: Colors.yellow[200],
         ),
       );
     }
@@ -102,7 +101,6 @@ class _LoginPageState extends State<LoginPage> {
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.red[200],
-        showCloseIcon: true,
       ),
     );
   }
