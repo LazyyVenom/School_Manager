@@ -1,5 +1,25 @@
 import "package:flutter/material.dart";
 import "package:school_manager/chatter.dart";
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:school_manager/login_page.dart';
+
+Future<void> logout(BuildContext context) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('isLoggedIn');
+
+  if (context.mounted) {
+    _navigateToLoginPage(context);
+  }
+}
+
+void _navigateToLoginPage(BuildContext context) {
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (context) => const LoginPage()),
+    (Route<dynamic> route) => false, // This removes all the previous routes
+  );
+}
+
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -68,7 +88,7 @@ class HomePage extends StatelessWidget {
                         overlayColor:
                             MaterialStatePropertyAll(Colors.red[100])),
                     onPressed: () {
-                      return;
+                      logout(context);
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
