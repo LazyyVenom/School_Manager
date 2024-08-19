@@ -8,22 +8,31 @@ class InitialChecker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _checkLoginStatus(),
-      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasData && snapshot.data == true) {
-          // User is already logged in, navigate to BasicStructure
-          Future.microtask(() => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => const BasicStructure())));
-        } else {
-          // User is not logged in, navigate to LoginPage
-          Future.microtask(() => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => const LoginPage())));
-        }
-        return const SizedBox.shrink(); // Return an empty widget while navigating
-      },
+    return Scaffold(
+      body: FutureBuilder<bool>(
+        future: _checkLoginStatus(),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            // Show a loading screen while waiting for the Future to complete
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasData && snapshot.data == true) {
+            // User is already logged in, navigate to BasicStructure
+            Future.microtask(() => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const BasicStructure())));
+          } else {
+            // User is not logged in, navigate to LoginPage
+            Future.microtask(() => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage())));
+          }
+          return const Center(
+              child: CircularProgressIndicator(),
+            ); // Return an empty widget while navigating
+        },
+      ),
     );
   }
 
