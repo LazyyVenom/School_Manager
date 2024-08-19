@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/home_page.dart';
+import 'package:school_manager/basic_structure.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 50.0),
+            const SizedBox(height: 20.0),
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
@@ -89,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
               },
             ),
 
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
@@ -98,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: const Text("Login"),
             ),
-            const SizedBox(height: 16.0),
+            const SizedBox(height: 5.0),
             TextButton(
               onPressed: _forgotPassword,
               child: const Text("Forgot Password?"),
@@ -115,11 +115,11 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text;
 
     // Add logic to handle different roles if needed
-    if (username == 'anubhav' && password == 'anubhav') {
+    if (username.trim() == 'a' && password.trim() == 'a') {
       // You can check _userRole here and navigate accordingly
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) => const BasicStructure()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
