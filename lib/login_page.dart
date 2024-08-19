@@ -11,6 +11,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  String _userRole = 'Teacher'; // Default role selected
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +52,48 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 24.0),
+
+            // Radio Buttons for Role Selection
+            const Text(
+              "Select Role:",
+              style: TextStyle(fontSize: 18.0),
+            ),
+            RadioListTile<String>(
+              title: const Text('Teacher'),
+              value: 'Teacher',
+              groupValue: _userRole,
+              onChanged: (String? value) {
+                setState(() {
+                  _userRole = value!;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Management'),
+              value: 'Management',
+              groupValue: _userRole,
+              onChanged: (String? value) {
+                setState(() {
+                  _userRole = value!;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: const Text('Student'),
+              value: 'Student',
+              groupValue: _userRole,
+              onChanged: (String? value) {
+                setState(() {
+                  _userRole = value!;
+                });
+              },
+            ),
+
+            const SizedBox(height: 24.0),
             ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 textStyle: const TextStyle(fontSize: 18),
               ),
               child: const Text("Login"),
@@ -73,18 +111,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() {
-    // Handle login logic here
     String username = _usernameController.text;
     String password = _passwordController.text;
 
+    // Add logic to handle different roles if needed
     if (username == 'anubhav' && password == 'anubhav') {
+      // You can check _userRole here and navigate accordingly
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomePage()));
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            "Incorrect ID Password!",
+            "Incorrect ID or Password!",
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.yellow[200],
