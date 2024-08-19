@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_manager/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -54,7 +55,8 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: _login,
               child: const Text("Login"),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 textStyle: const TextStyle(fontSize: 18),
               ),
             ),
@@ -76,11 +78,19 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text;
 
     if (username == 'anubhav' && password == 'anubhav') {
-      const Navigator();
-    }
-
-    else {
-
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => const HomePage()));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Incorrect ID Password!",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.red[200],
+          showCloseIcon: true,
+        ),
+      );
     }
   }
 
@@ -90,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
         content: const Text(
           "Please Contact Your Teacher!",
           style: TextStyle(color: Colors.black),
-          ),
+        ),
         backgroundColor: Colors.red[200],
         showCloseIcon: true,
       ),
