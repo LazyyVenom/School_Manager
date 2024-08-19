@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/intial_login_checker.dart';
+import 'package:school_manager/initial_login_checker.dart';
 // import 'package:school_manager/basic_structure.dart';
 // import 'package:school_manager/login_page.dart';
 
