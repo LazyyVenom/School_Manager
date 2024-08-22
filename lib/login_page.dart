@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/basic_structure.dart';
@@ -39,7 +40,7 @@ class _LoginPageState extends State<LoginPage> {
             TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
-                labelText: "Username",
+                labelText: "Email",
                 border: OutlineInputBorder(),
               ),
             ),
@@ -112,25 +113,32 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
-    String username = _usernameController.text;
-    String password = _passwordController.text;
+    String email = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
 
-    // Add logic to handle different roles if needed
-    if (username.trim() == 'a' && password.trim() == 'a') {
+    try {
+      // Sign in with Firebase Authentication
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      // Save login state locally using SharedPreferences
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true); // Save login state
-      await prefs.setString('userRole', _userRole); // Optionally save the role
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('userRole', _userRole);
 
+      // Navigate to the main application screen
+      if (context.mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const BasicStructure()),
+        );
+      }
+    } catch (e) {
       // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const BasicStructure()),
-      );
-    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            "Incorrect ID or Password!",
+            "Incorrect email or password!",
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.yellow[200],
@@ -143,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text(
-          "Please Contact Your Teacher!",
+          "Please contact your teacher!",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.red[200],
