@@ -116,7 +116,9 @@ class HomePage extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
-                              context, MaterialPageRoute(builder: (context) => const ChatPage())
+                              context, MaterialPageRoute(
+                                builder: (context) => const ChatPage(type: "Teacher")
+                                )
                               );
                           },
                           child: Card(
@@ -140,7 +142,13 @@ class HomePage extends StatelessWidget {
                       ),
                       Expanded(
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context, MaterialPageRoute(
+                                builder: (context) => const ChatPage(type: 'Management')
+                                )
+                              );
+                          },
                           child: Card(
                             color: Colors.deepPurple[50],
                             child: const Column(
