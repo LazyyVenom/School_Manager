@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/basic_structure.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,7 +12,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String _userRole = 'Teacher'; // Default role selected
 
   @override
   Widget build(BuildContext context) {
@@ -53,44 +51,6 @@ class _LoginPageState extends State<LoginPage> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 24.0),
-
-            // Radio Buttons for Role Selection
-            const Text(
-              "Select Role:",
-              style: TextStyle(fontSize: 18.0),
-            ),
-            RadioListTile<String>(
-              title: const Text('Teacher'),
-              value: 'Teacher',
-              groupValue: _userRole,
-              onChanged: (String? value) {
-                setState(() {
-                  _userRole = value!;
-                });
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('Management'),
-              value: 'Management',
-              groupValue: _userRole,
-              onChanged: (String? value) {
-                setState(() {
-                  _userRole = value!;
-                });
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('Student'),
-              value: 'Student',
-              groupValue: _userRole,
-              onChanged: (String? value) {
-                setState(() {
-                  _userRole = value!;
-                });
-              },
-            ),
-
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: _login,
@@ -121,11 +81,6 @@ class _LoginPageState extends State<LoginPage> {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
 
-      // Save login state locally using SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool('isLoggedIn', true);
-      await prefs.setString('userRole', _userRole);
-
       // Navigate to the main application screen
       if (context.mounted) {
         Navigator.pushReplacement(
@@ -134,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
-      // ignore: use_build_context_synchronously
+      // Handle sign-in errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
