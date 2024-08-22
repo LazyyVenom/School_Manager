@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/initial_login_checker.dart';
-// import 'package:school_manager/basic_structure.dart';
-// import 'package:school_manager/login_page.dart';
+import 'package:school_manager/auth/auth_gate.dart';
+import 'package:school_manager/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const SchoolManagerApp());
 }
 
@@ -32,6 +34,6 @@ class SchoolManager extends StatefulWidget {
 class _SchoolManagerState extends State<SchoolManager> {
   @override
   Widget build(BuildContext context) {
-    return const InitialChecker();
+    return const AuthGate();
   }
 }
