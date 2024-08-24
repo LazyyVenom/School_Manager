@@ -89,6 +89,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
+      
       // Handle sign-in errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
