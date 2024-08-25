@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 
-class AlertPage extends StatelessWidget {
-  const AlertPage({super.key});
+class AlertPageMt extends StatelessWidget {
+  const AlertPageMt({super.key});
 
   @override
   Widget build(BuildContext context) {
