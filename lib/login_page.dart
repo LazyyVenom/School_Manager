@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/auth/auth_service.dart';
@@ -15,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,20 +54,28 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: _login,
-              style: ElevatedButton.styleFrom(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                textStyle: const TextStyle(fontSize: 18),
-              ),
-              child: const Text("Login"),
-            ),
-            const SizedBox(height: 5.0),
-            TextButton(
-              onPressed: _forgotPassword,
-              child: const Text("Forgot Password?"),
-            ),
+            _isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          textStyle: const TextStyle(fontSize: 18),
+                        ),
+                        child: const Text("Login"),
+                      ),
+                      const SizedBox(height: 5.0),
+                      TextButton(
+                        onPressed: _forgotPassword,
+                        child: const Text("Forgot Password?"),
+                      ),
+                    ],
+                  ),
             const SizedBox(height: 50.0),
           ],
         ),
@@ -77,17 +84,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
-    // Get Instance from provider
+    setState(() {
+      _isLoading = true;
+    });
+
     final authService = Provider.of<AuthService>(context, listen: false);
 
     String email = _usernameController.text.trim();
     String password = _passwordController.text.trim();
 
     try {
-      // Sign in with Firebase Authentication
       await authService.signInWithEmailAndPassword(email, password);
 
-      // Navigate to the main application screen
       if (context.mounted) {
         Navigator.pushReplacement(
           context,
@@ -95,7 +103,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
-      // Handle sign-in errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -105,6 +112,10 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.yellow[200],
         ),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
