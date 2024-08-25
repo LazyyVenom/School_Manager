@@ -5,16 +5,16 @@ import 'package:school_manager/attendance_page.dart';
 import 'package:school_manager/bus_tracking_page.dart';
 import 'package:school_manager/home_page.dart';
 
-class BasicStructure extends StatefulWidget {
-  const BasicStructure({
+class StudentDashboard extends StatefulWidget {
+  const StudentDashboard({
     super.key,
   });
 
   @override
-  State<BasicStructure> createState() => _BasicStructureState();
+  State<StudentDashboard> createState() => _BasicStructureState();
 }
 
-class _BasicStructureState extends State<BasicStructure> {
+class _BasicStructureState extends State<StudentDashboard> {
   int currentPage = 0;
   List<Widget> pages = const [
     HomePage(),

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/basic_structure.dart';
+import 'package:school_manager/student_dashboard.dart';
 import 'package:school_manager/login_page.dart';
 
 class AuthGate extends StatelessWidget {
@@ -14,7 +14,7 @@ class AuthGate extends StatelessWidget {
         builder: (context, snapshot) {
           // User is Logged In
           if (snapshot.hasData) {
-            return const BasicStructure();
+            return const StudentDashboard();
           } else {
             return const LoginPage();
           }

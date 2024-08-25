@@ -50,3 +50,5 @@ app.*.map.json
 #Keys related file
 lib\firebase_options.dart
 *firebase_options.dart
+
+.vscode

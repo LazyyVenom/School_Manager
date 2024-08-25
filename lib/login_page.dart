@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/auth/auth_service.dart';
-import 'package:school_manager/basic_structure.dart';
+import 'package:school_manager/student_dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
       if (context.mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const BasicStructure()),
+          MaterialPageRoute(builder: (context) => const StudentDashboard()),
         );
       }
     } catch (e) {
