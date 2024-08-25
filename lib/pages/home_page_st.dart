@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
-import "package:school_manager/chatter.dart";
+import 'package:school_manager/chat/chatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:school_manager/login_page.dart';
+import 'package:school_manager/pages/login_page.dart';
 
 Future<void> logout(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();

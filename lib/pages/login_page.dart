@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/auth/auth_service.dart';
-import 'package:school_manager/student_dashboard.dart';
+import 'package:school_manager/dashboards/student_dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
