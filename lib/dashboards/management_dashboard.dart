@@ -39,6 +39,7 @@ class _ManagementDashboardState extends State<ManagementDashboard> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Colors.white,
+        backgroundColor: Colors.deepPurple,
         unselectedItemColor: Colors.deepPurple[100],
         selectedFontSize: 0,
         unselectedFontSize: 0,
