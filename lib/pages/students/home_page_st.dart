@@ -191,7 +191,7 @@ class HomePage extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Icon(
-                                    Icons.grade_sharp,
+                                    Icons.bar_chart,
                                     size: 70,
                                   ),
                                 )

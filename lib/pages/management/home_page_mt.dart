@@ -20,7 +20,6 @@ void _navigateToLoginPage(BuildContext context) {
   );
 }
 
-
 class HomePageMt extends StatelessWidget {
   const HomePageMt({super.key});
 
@@ -45,7 +44,7 @@ class HomePageMt extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Text(
-                        "Class X Std A, Roll No. 14",
+                        "Administrator",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
@@ -57,43 +56,40 @@ class HomePageMt extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(
+                Expanded(
+                  child: TextButton(
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.deepPurple[50])),
+                      backgroundColor:
+                          MaterialStatePropertyAll(Colors.deepPurple[50]),
+                    ),
                     onPressed: () {
                       return;
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text("Change Password"),
-                    )),
-                TextButton(
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                    width: 10), 
+                Expanded(
+                  child: TextButton(
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.deepPurple[50])),
-                    onPressed: () {
-                      return;
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Request Profile Edit"),
-                    )),
-                TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.red[50]),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.red[400]),
-                        overlayColor:
-                            MaterialStatePropertyAll(Colors.red[100])),
+                      backgroundColor: MaterialStatePropertyAll(Colors.red[50]),
+                      foregroundColor:
+                          MaterialStatePropertyAll(Colors.red[400]),
+                      overlayColor: MaterialStatePropertyAll(Colors.red[100]),
+                    ),
                     onPressed: () {
                       logout(context);
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text("Log Out"),
-                    )),
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 6),
@@ -116,10 +112,10 @@ class HomePageMt extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
-                              context, MaterialPageRoute(
-                                builder: (context) => const ChatPage(type: "Teacher")
-                                )
-                              );
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ChatPage(type: "Teachers")));
                           },
                           child: Card(
                               color: Colors.deepPurple[50],
@@ -127,7 +123,7 @@ class HomePageMt extends StatelessWidget {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.all(10),
-                                    child: Text("Contact Teacher"),
+                                    child: Text("Contact Teachers"),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.symmetric(vertical: 8),
@@ -144,10 +140,10 @@ class HomePageMt extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
-                              context, MaterialPageRoute(
-                                builder: (context) => const ChatPage(type: 'Management')
-                                )
-                              );
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ChatPage(type: 'Student')));
                           },
                           child: Card(
                             color: Colors.deepPurple[50],
@@ -155,12 +151,12 @@ class HomePageMt extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: Text("Contact Management"),
+                                  child: Text("Contact Students"),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.symmetric(vertical: 8),
                                   child: Icon(
-                                    Icons.manage_accounts,
+                                    Icons.boy,
                                     size: 55,
                                   ),
                                 ),
@@ -185,13 +181,12 @@ class HomePageMt extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
-                                  child:
-                                      Text("Check Your Child's Progress Here"),
+                                  child: Text("Create Teacher's Account"),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Icon(
-                                    Icons.grade_sharp,
+                                    Icons.assignment_ind,
                                     size: 70,
                                   ),
                                 )
