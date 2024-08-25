@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/auth/auth_service.dart';
 import 'package:school_manager/dashboards/student_dashboard.dart';
+import 'package:school_manager/dashboards/teacher_dashboard.dart';
+import 'package:school_manager/dashboards/management_dashboard.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -89,7 +92,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
-    // Dismiss the keyboard
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -102,13 +104,41 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text.trim();
 
     try {
-      await authService.signInWithEmailAndPassword(email, password);
+      // Sign in with Firebase Authentication
+      final user = await authService.signInWithEmailAndPassword(email, password);
 
-      if (context.mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const StudentDashboard()),
-        );
+      // Fetch user role from Firestore
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
+
+      if (userDoc.exists) {
+        final role = userDoc.data()?['role'];
+
+        // Navigate based on role
+        if (context.mounted) {
+          if (role == 'student') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const StudentDashboard()),
+            );
+          } else if (role == 'teacher') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const TeacherDashboard()),
+            );
+          } else if (role == 'management') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ManagementDashboard()),
+            );
+          } else {
+            throw Exception("Unknown role: $role");
+          }
+        }
+      } else {
+        throw Exception("User data not found");
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -9,10 +9,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthService() ,
+    ChangeNotifierProvider<AuthService>(
+      create: (context) => AuthService(),
       child: const SchoolManagerApp(),
-      )
+    ),
   );
 }
 
@@ -24,7 +24,7 @@ class SchoolManagerApp extends StatelessWidget {
     return MaterialApp(
       title: 'School Manager',
       theme: ThemeData(
-        colorSchemeSeed: Colors.deepPurple
+        colorSchemeSeed: Colors.deepPurple,
       ),
       home: const AuthGate(),
     );
