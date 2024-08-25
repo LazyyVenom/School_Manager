@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:school_manager/dashboards/student_dashboard.dart';
+import 'package:school_manager/dashboards/teacher_dashboard.dart';
 import 'package:school_manager/dashboards/management_dashboard.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -9,15 +12,53 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
+      body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          // User is Logged In
-          if (snapshot.hasData) {
-            return const ManagementDashboard();
-          } else {
+          // User is not logged in
+          if (!snapshot.hasData) {
             return const LoginPage();
           }
+
+          // User is logged in, check the role
+          User? user = snapshot.data;
+
+          if (user != null) {
+            return FutureBuilder<DocumentSnapshot>(
+              future: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.email)
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                  return const Center(
+                    child: Text("Error loading user data."),
+                  );
+                }
+
+                var userData = snapshot.data!;
+                String role = userData['role'];
+
+                if (role == 'Management') {
+                  return const ManagementDashboard();
+                } else if (role == 'Teacher') {
+                  return const TeacherDashboard();
+                } else if (role == 'Student') {
+                  return const StudentDashboard();
+                } else {
+                  return const Center(
+                    child: Text("Unknown role."),
+                  );
+                }
+              },
+            );
+          }
+
+          return const LoginPage();
         },
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class CustomUser {
   final String uid;
@@ -7,7 +8,7 @@ class CustomUser {
   CustomUser({required this.uid, required this.email});
 }
 
-class AuthService {
+class AuthService extends ChangeNotifier{
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   // Method to sign in with email and password
