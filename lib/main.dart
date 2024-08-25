@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/auth/auth_gate.dart';
+import 'package:school_manager/auth/auth_service.dart';
 import 'package:school_manager/firebase_options.dart';
 import 'package:provider/provider.dart';
 
