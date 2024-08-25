@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/pages/alert_page_st.dart';
+import 'package:school_manager/pages/management/alert_page_mt.dart';
 import 'package:school_manager/pages/bus_tracking_page.dart';
-import 'package:school_manager/pages/home_page_st.dart';
+import 'package:school_manager/pages/students/home_page_st.dart';
 
 class ManagementDashboard extends StatefulWidget {
   const ManagementDashboard({

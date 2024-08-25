@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/pages/alert_page_st.dart';
-import 'package:school_manager/pages/assignment_page_st.dart';
-import 'package:school_manager/pages/attendance_page_st.dart';
+import 'package:school_manager/pages/students/alert_page_st.dart';
+import 'package:school_manager/pages/students/assignment_page_st.dart';
+import 'package:school_manager/pages/students/attendance_page_st.dart';
 import 'package:school_manager/pages/bus_tracking_page.dart';
-import 'package:school_manager/pages/home_page_st.dart';
+import 'package:school_manager/pages/students/home_page_st.dart';
 
 class TeacherDashboard extends StatefulWidget {
   const TeacherDashboard({
