@@ -48,3 +48,4 @@ app.*.map.json
 .env
 
 #Keys related file
+lib\firebase_options.dart
