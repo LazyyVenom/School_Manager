@@ -1,7 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:school_manager/auth/auth_service.dart';
 import 'package:school_manager/basic_structure.dart';
 
 class LoginPage extends StatefulWidget {
@@ -57,7 +58,8 @@ class _LoginPageState extends State<LoginPage> {
             ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 textStyle: const TextStyle(fontSize: 18),
               ),
               child: const Text("Login"),
@@ -75,13 +77,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
+    // Get Instance from provider
+    final authService = Provider.of<AuthService>(context, listen: false);
+
     String email = _usernameController.text.trim();
     String password = _passwordController.text.trim();
 
     try {
       // Sign in with Firebase Authentication
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
+      await authService.signInWithEmailAndPassword(email, password);
 
       // Navigate to the main application screen
       if (context.mounted) {
@@ -91,13 +95,12 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
-      
       // Handle sign-in errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            "Incorrect email or password!",
-            style: TextStyle(color: Colors.black),
+          content: Text(
+            e.toString(),
+            style: const TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.yellow[200],
         ),
