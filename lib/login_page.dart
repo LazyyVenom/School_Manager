@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/auth/auth_service.dart';
@@ -54,28 +56,31 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 20.0),
-            _isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: _login,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 15),
-                          textStyle: const TextStyle(fontSize: 18),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _isLoading ? null : _login,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 18),
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.0,
+                          color: Colors.white,
                         ),
-                        child: const Text("Login"),
-                      ),
-                      const SizedBox(height: 5.0),
-                      TextButton(
-                        onPressed: _forgotPassword,
-                        child: const Text("Forgot Password?"),
-                      ),
-                    ],
-                  ),
+                      )
+                    : const Text("Login"),
+              ),
+            ),
+            const SizedBox(height: 5.0),
+            TextButton(
+              onPressed: _isLoading ? null : _forgotPassword,
+              child: const Text("Forgot Password?"),
+            ),
             const SizedBox(height: 50.0),
           ],
         ),
@@ -84,6 +89,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login() async {
+    // Dismiss the keyboard
+    FocusScope.of(context).unfocus();
+
     setState(() {
       _isLoading = true;
     });
