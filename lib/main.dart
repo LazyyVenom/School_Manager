@@ -2,11 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:school_manager/auth/auth_gate.dart';
 import 'package:school_manager/firebase_options.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const SchoolManagerApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AuthService() ,
+      )
+  );
 }
 
 class SchoolManagerApp extends StatelessWidget {
@@ -19,7 +24,7 @@ class SchoolManagerApp extends StatelessWidget {
       theme: ThemeData(
         colorSchemeSeed: Colors.deepPurple
       ),
-      home: const SchoolManager(),
+      home: const AuthGate(),
     );
   }
 }
