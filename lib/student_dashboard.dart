@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/alert_page.dart';
-import 'package:school_manager/assignment_page.dart';
-import 'package:school_manager/attendance_page.dart';
-import 'package:school_manager/bus_tracking_page.dart';
-import 'package:school_manager/home_page.dart';
+import 'package:school_manager/pages/alert_page_st.dart';
+import 'package:school_manager/pages/assignment_page_st.dart';
+import 'package:school_manager/pages/attendance_page_st.dart';
+import 'package:school_manager/pages/bus_tracking_page.dart';
+import 'package:school_manager/pages/home_page_st.dart';
 
 class StudentDashboard extends StatefulWidget {
   const StudentDashboard({
@@ -11,10 +11,10 @@ class StudentDashboard extends StatefulWidget {
   });
 
   @override
-  State<StudentDashboard> createState() => _BasicStructureState();
+  State<StudentDashboard> createState() => _StudentDashboardState();
 }
 
-class _BasicStructureState extends State<StudentDashboard> {
+class _StudentDashboardState extends State<StudentDashboard> {
   int currentPage = 0;
   List<Widget> pages = const [
     HomePage(),

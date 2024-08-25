@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:school_manager/alert_page.dart';
-import 'package:school_manager/assignment_page.dart';
-import 'package:school_manager/attendance_page.dart';
-import 'package:school_manager/bus_tracking_page.dart';
-import 'package:school_manager/home_page.dart';
+import 'package:school_manager/pages/alert_page_st.dart';
+import 'package:school_manager/pages/bus_tracking_page.dart';
+import 'package:school_manager/pages/home_page_st.dart';
 
-class StudentDashboard extends StatefulWidget {
-  const StudentDashboard({
+class ManagementDashboard extends StatefulWidget {
+  const ManagementDashboard({
     super.key,
   });
 
   @override
-  State<StudentDashboard> createState() => _BasicStructureState();
+  State<ManagementDashboard> createState() => _ManagementDashboardState();
 }
 
-class _BasicStructureState extends State<StudentDashboard> {
+class _ManagementDashboardState extends State<ManagementDashboard> {
   int currentPage = 0;
   List<Widget> pages = const [
     HomePage(),
     AlertPage(),
     BusTrackingPage(),
-    AssignmentPage(),
-    AttendancePage()
   ];
 
   @override
@@ -67,16 +63,6 @@ class _BasicStructureState extends State<StudentDashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.bus_alert),
             label: "Bus Tracking",
-            backgroundColor: Colors.deepPurple
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: "Assignment",
-            backgroundColor: Colors.deepPurple
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: "Attendance",
             backgroundColor: Colors.deepPurple
           ),
         ],
