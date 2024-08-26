@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:school_manager/chat/chatter.dart';
-import 'package:school_manager/pages/management/teacher_id_create.dart';
+import 'package:school_manager/pages/teacher/student_id_create.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -45,7 +45,7 @@ class HomePageTh extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Text(
-                        "Administrator",
+                        "Teacher Class X Std B",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
@@ -115,7 +115,7 @@ class HomePageTh extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const ChatPage(type: "Teachers")));
+                                        const ChatPage(type: "Management")));
                           },
                           child: Card(
                               color: Colors.deepPurple[50],
@@ -123,12 +123,12 @@ class HomePageTh extends StatelessWidget {
                                 children: [
                                   Padding(
                                     padding: EdgeInsets.all(10),
-                                    child: Text("Contact Teachers"),
+                                    child: Text("Contact Management"),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.symmetric(vertical: 8),
                                     child: Icon(
-                                      Icons.person,
+                                      Icons.manage_accounts,
                                       size: 55,
                                     ),
                                   )
@@ -143,7 +143,7 @@ class HomePageTh extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const ChatPage(type: 'Student')));
+                                        const ChatPage(type: 'Students')));
                           },
                           child: Card(
                             color: Colors.deepPurple[50],
@@ -179,7 +179,7 @@ class HomePageTh extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const TeacherRegisterPage()),
+                                      const StudentRegisterPage()),
                             );
                           },
                           child: Card(
@@ -188,7 +188,7 @@ class HomePageTh extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
-                                  child: Text("Create Teacher's Account"),
+                                  child: Text("Create Student's Account"),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),

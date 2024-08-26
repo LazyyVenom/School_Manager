@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text(
-          "Please contact your teacher!",
+          "Please contact your Teacher/Management!",
           style: TextStyle(color: Colors.black),
         ),
         backgroundColor: Colors.red[200],

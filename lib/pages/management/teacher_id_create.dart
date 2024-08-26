@@ -16,9 +16,15 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _classController = TextEditingController();
-  final TextEditingController _sectionController = TextEditingController();
+  String? _selectedClass;
+  String? _selectedSection;
   bool _isLoading = false;
+
+  final List<String> classes = [
+    'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'
+  ];
+
+  final List<String> sections = ['A', 'B', 'C'];
 
   @override
   Widget build(BuildContext context) {
@@ -67,20 +73,42 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
               ),
             ),
             const SizedBox(height: 16.0),
-            TextField(
-              controller: _classController,
+            DropdownButtonFormField<String>(
+              value: _selectedClass,
+              items: classes.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               decoration: const InputDecoration(
                 labelText: "Class",
                 border: OutlineInputBorder(),
               ),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedClass = newValue;
+                });
+              },
             ),
             const SizedBox(height: 16.0),
-            TextField(
-              controller: _sectionController,
+            DropdownButtonFormField<String>(
+              value: _selectedSection,
+              items: sections.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               decoration: const InputDecoration(
                 labelText: "Section",
                 border: OutlineInputBorder(),
               ),
+              onChanged: (newValue) {
+                setState(() {
+                  _selectedSection = newValue;
+                });
+              },
             ),
             const SizedBox(height: 20.0),
             SizedBox(
@@ -123,14 +151,30 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
     String name = _nameController.text.trim();
-    String classAssigned = _classController.text.trim();
-    String section = _sectionController.text.trim();
+    String? classAssigned = _selectedClass;
+    String? section = _selectedSection;
+
+    if (classAssigned == null || section == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Please select both Class and Section.",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.red[200],
+        ),
+      );
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
 
     try {
       // Register the teacher using Firebase Authentication
       final user = await authService.registerWithEmailAndPassword(email, password);
 
-      // Store additional teacher details in Firestore using email as the UID
+      // Store additional teacher details in Firestore
       await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
         'email': email,
         'name': name,
@@ -153,9 +197,11 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
       // clear the fields
       _emailController.clear();
       _nameController.clear();
-      _classController.clear();
-      _sectionController.clear();
       _passwordController.clear();
+      setState(() {
+        _selectedClass = null;
+        _selectedSection = null;
+      });
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
