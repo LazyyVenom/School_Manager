@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:school_manager/chat/chatter.dart';
+import 'package:school_manager/pages/management/teacher_id_create.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -71,8 +72,7 @@ class HomePageMt extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
-                    width: 10), 
+                const SizedBox(width: 10),
                 Expanded(
                   child: TextButton(
                     style: ButtonStyle(
@@ -96,7 +96,7 @@ class HomePageMt extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 6),
             Text(
-              "Recent Activities",
+              "Perform Tasks",
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 6),
@@ -174,7 +174,14 @@ class HomePageMt extends StatelessWidget {
                     children: [
                       Expanded(
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const TeacherRegisterPage()),
+                            );
+                          },
                           child: Card(
                             color: Colors.deepPurple[50],
                             child: const Column(

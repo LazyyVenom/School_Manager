@@ -27,7 +27,7 @@ class AuthGate extends StatelessWidget {
             return FutureBuilder<DocumentSnapshot>(
               future: FirebaseFirestore.instance
                   .collection('users')
-                  .doc(user.email)
+                  .doc(user.email) // Use email as the document ID
                   .get(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {

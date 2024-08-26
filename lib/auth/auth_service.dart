@@ -8,7 +8,7 @@ class CustomUser {
   CustomUser({required this.uid, required this.email});
 }
 
-class AuthService extends ChangeNotifier{
+class AuthService extends ChangeNotifier {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   // Method to sign in with email and password
@@ -21,8 +21,8 @@ class AuthService extends ChangeNotifier{
       );
       final User? user = result.user;
       if (user != null) {
-        // Return a CustomUser object with uid and email
-        return CustomUser(uid: user.uid, email: user.email!);
+        // Return a CustomUser object with email as uid and email
+        return CustomUser(uid: user.email!, email: user.email!);
       }
     } catch (e) {
       // Handle sign-in errors (you can add more specific error handling here)
@@ -34,5 +34,25 @@ class AuthService extends ChangeNotifier{
   // Method to sign out
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+  }
+
+  // Method to register with email and password
+  Future<CustomUser?> registerWithEmailAndPassword(String email, String password) async {
+    try {
+      // Register using Firebase Authentication
+      UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final User? user = result.user;
+      if (user != null) {
+        // Return a CustomUser object with email as uid and email
+        return CustomUser(uid: user.email!, email: user.email!);
+      }
+    } catch (e) {
+      // Handle registration errors
+      return null;
+    }
+    return null;
   }
 }

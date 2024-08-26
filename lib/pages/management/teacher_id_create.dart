@@ -4,27 +4,27 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firest
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/auth/auth_service.dart';
-import 'package:school_manager/dashboards/student_dashboard.dart';
-import 'package:school_manager/dashboards/teacher_dashboard.dart';
-import 'package:school_manager/dashboards/management_dashboard.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class TeacherRegisterPage extends StatefulWidget {
+  const TeacherRegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<TeacherRegisterPage> createState() => _TeacherRegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
+class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _classController = TextEditingController();
+  final TextEditingController _sectionController = TextEditingController();
   bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Login"),
+        title: const Text("Register Teacher"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             const SizedBox(height: 50.0),
             const Text(
-              "Welcome Back!",
+              "Register New Teacher",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24.0,
@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 20.0),
             TextField(
-              controller: _usernameController,
+              controller: _emailController,
               decoration: const InputDecoration(
                 labelText: "Email",
                 border: OutlineInputBorder(),
@@ -58,11 +58,35 @@ class _LoginPageState extends State<LoginPage> {
                 border: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: _nameController,
+              decoration: const InputDecoration(
+                labelText: "Name",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: _classController,
+              decoration: const InputDecoration(
+                labelText: "Class",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: _sectionController,
+              decoration: const InputDecoration(
+                labelText: "Section",
+                border: OutlineInputBorder(),
+              ),
+            ),
             const SizedBox(height: 20.0),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isLoading ? null : _login,
+                onPressed: _isLoading ? null : _registerTeacher,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   textStyle: const TextStyle(fontSize: 18),
@@ -76,13 +100,8 @@ class _LoginPageState extends State<LoginPage> {
                           color: Colors.deepPurple[200],
                         ),
                       )
-                    : const Text("Login"),
+                    : const Text("Register"),
               ),
-            ),
-            const SizedBox(height: 5.0),
-            TextButton(
-              onPressed: _isLoading ? null : _forgotPassword,
-              child: const Text("Forgot Password?"),
             ),
             const SizedBox(height: 50.0),
           ],
@@ -91,7 +110,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _login() async {
+  void _registerTeacher() async {
+    // Dismiss the keyboard
     FocusScope.of(context).unfocus();
 
     setState(() {
@@ -100,46 +120,38 @@ class _LoginPageState extends State<LoginPage> {
 
     final authService = Provider.of<AuthService>(context, listen: false);
 
-    String email = _usernameController.text.trim();
+    String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
+    String name = _nameController.text.trim();
+    String classAssigned = _classController.text.trim();
+    String section = _sectionController.text.trim();
 
     try {
-      // Sign in with Firebase Authentication
-      final user = await authService.signInWithEmailAndPassword(email, password);
+      // Register the teacher using Firebase Authentication
+      final user = await authService.registerWithEmailAndPassword(email, password);
 
-      // Fetch user role from Firestore using email as UID
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.email)
-          .get();
+      // Store additional teacher details in Firestore using email as the UID
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        'email': email,
+        'name': name,
+        'role': 'teacher',
+        'class': classAssigned,
+        'section': section,
+      });
 
-      if (userDoc.exists) {
-        final role = userDoc.data()?['role'];
+      // Show a success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Teacher Registered Successfully!",
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.green[200],
+        ),
+      );
 
-        // Navigate based on role
-        if (context.mounted) {
-          if (role == 'student') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const StudentDashboard()),
-            );
-          } else if (role == 'teacher') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const TeacherDashboard()),
-            );
-          } else if (role == 'management') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const ManagementDashboard()),
-            );
-          } else {
-            throw Exception("Unknown role: $role");
-          }
-        }
-      } else {
-        throw Exception("User data not found");
-      }
+      // Optionally, navigate back or clear the fields
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -147,7 +159,7 @@ class _LoginPageState extends State<LoginPage> {
             e.toString(),
             style: const TextStyle(color: Colors.black),
           ),
-          backgroundColor: Colors.yellow[200],
+          backgroundColor: Colors.red[200],
         ),
       );
     } finally {
@@ -155,17 +167,5 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = false;
       });
     }
-  }
-
-  void _forgotPassword() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text(
-          "Please contact your teacher!",
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.red[200],
-      ),
-    );
   }
 }
