@@ -150,8 +150,13 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
         ),
       );
 
-      // Optionally, navigate back or clear the fields
-      Navigator.pop(context);
+      // clear the fields
+      _emailController.clear();
+      _nameController.clear();
+      _classController.clear();
+      _sectionController.clear();
+      _passwordController.clear();
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

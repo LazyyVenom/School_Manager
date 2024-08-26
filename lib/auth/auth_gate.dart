@@ -43,11 +43,11 @@ class AuthGate extends StatelessWidget {
                 var userData = snapshot.data!;
                 String role = userData['role'];
 
-                if (role == 'Management') {
+                if (role == 'management') {
                   return const ManagementDashboard();
-                } else if (role == 'Teacher') {
+                } else if (role == 'teacher') {
                   return const TeacherDashboard();
-                } else if (role == 'Student') {
+                } else if (role == 'student') {
                   return const StudentDashboard();
                 } else {
                   return const Center(

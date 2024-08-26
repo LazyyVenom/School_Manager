@@ -39,20 +39,24 @@ class AuthService extends ChangeNotifier {
   // Method to register with email and password
   Future<CustomUser?> registerWithEmailAndPassword(String email, String password) async {
     try {
+      if (password.length < 6) {
+        throw "Password Length Should be more than 6!";
+      }
       // Register using Firebase Authentication
       UserCredential result = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
       final User? user = result.user;
-      if (user != null) {
+      if (user == null) {
+        throw "Failed To Create A User!";
+      } else {
         // Return a CustomUser object with email as uid and email
         return CustomUser(uid: user.email!, email: user.email!);
       }
     } catch (e) {
       // Handle registration errors
-      return null;
+      throw e.toString();
     }
-    return null;
   }
 }
