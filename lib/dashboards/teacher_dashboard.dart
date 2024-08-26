@@ -42,6 +42,8 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
         children: pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.deepPurple,
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.deepPurple[100],
         selectedFontSize: 0,
