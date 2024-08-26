@@ -68,12 +68,12 @@ class _LoginPageState extends State<LoginPage> {
                   textStyle: const TextStyle(fontSize: 18),
                 ),
                 child: _isLoading
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.0,
-                          color: Colors.white,
+                          color: Colors.deepPurple[200],
                         ),
                       )
                     : const Text("Login"),
