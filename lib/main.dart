@@ -31,6 +31,7 @@ class SchoolManagerApp extends StatelessWidget {
   }
 }
 
+
 class SchoolManager extends StatefulWidget {
   const SchoolManager({super.key});
 
