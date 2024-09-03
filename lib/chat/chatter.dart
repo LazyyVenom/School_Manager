@@ -79,7 +79,7 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () {
                     if (_controller.text.isNotEmpty) {
                       // Sending Logic Here
-                      _controller.clear(); // Clear the input after sending
+                      _controller.clear(); 
                     }
                   },
                 ),
