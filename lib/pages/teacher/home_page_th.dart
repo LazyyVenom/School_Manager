@@ -45,7 +45,7 @@ class HomePageTh extends StatelessWidget {
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Text(
-                        "Teacher Class X Std B",
+                        "Class Teacher X Std B",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
