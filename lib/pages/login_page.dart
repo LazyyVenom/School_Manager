@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/auth/auth_service.dart';
 import 'package:school_manager/dashboards/student_dashboard.dart';
 import 'package:school_manager/dashboards/teacher_dashboard.dart';
@@ -64,7 +65,8 @@ class _LoginPageState extends State<LoginPage> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _login,
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   textStyle: const TextStyle(fontSize: 18),
                 ),
                 child: _isLoading
@@ -100,16 +102,18 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final authService = Provider.of<AuthService>(context, listen: false);
+    final currentUser = Provider.of<CurrentUser>(context, listen: false);
 
     String email = _usernameController.text.trim();
     String password = _passwordController.text.trim();
 
     try {
       // Sign in with Firebase Authentication
-      final user = await authService.signInWithEmailAndPassword(email, password);
+      final user =
+          await authService.signInWithEmailAndPassword(email, password);
 
       if (user == null) {
-        throw("ID Password Didn't Matched");
+        throw ("ID Password Didn't Matched");
       }
 
       // Fetch user role from Firestore using email as UID
@@ -123,6 +127,14 @@ class _LoginPageState extends State<LoginPage> {
 
         // Navigate based on role
         if (context.mounted) {
+          currentUser.updateUser(
+            newGmail: user.email,
+            newName: userDoc['name'] ?? '',
+            newAccountType: role,
+            newClassName: userDoc['className'] ?? '',
+            newSection: userDoc['section'] ?? '',
+          );
+
           if (role == 'student') {
             Navigator.pushReplacement(
               context,
@@ -136,7 +148,8 @@ class _LoginPageState extends State<LoginPage> {
           } else if (role == 'management') {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const ManagementDashboard()),
+              MaterialPageRoute(
+                  builder: (context) => const ManagementDashboard()),
             );
           } else {
             throw Exception("Unknown role: $role");
