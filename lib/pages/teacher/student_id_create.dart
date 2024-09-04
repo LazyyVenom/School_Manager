@@ -20,12 +20,6 @@ class _StudentRegisterPageState extends State<StudentRegisterPage> {
   String? _selectedSection;
   bool _isLoading = false;
 
-  final List<String> classes = [
-    'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'
-  ];
-
-  final List<String> sections = ['A', 'B', 'C'];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,44 +67,6 @@ class _StudentRegisterPageState extends State<StudentRegisterPage> {
               ),
             ),
             const SizedBox(height: 16.0),
-            DropdownButtonFormField<String>(
-              value: _selectedClass,
-              items: classes.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              decoration: const InputDecoration(
-                labelText: "Class",
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedClass = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            DropdownButtonFormField<String>(
-              value: _selectedSection,
-              items: sections.map((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              decoration: const InputDecoration(
-                labelText: "Section",
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedSection = newValue;
-                });
-              },
-            ),
-            const SizedBox(height: 20.0),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
