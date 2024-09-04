@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:school_manager/dashboards/student_dashboard.dart';
 import 'package:school_manager/dashboards/teacher_dashboard.dart';
 import 'package:school_manager/dashboards/management_dashboard.dart';
-import 'package:school_manager/main.dart';
 import 'package:school_manager/pages/login_page.dart';
+import 'package:school_manager/additional_features.dart'; 
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -44,8 +45,17 @@ class AuthGate extends StatelessWidget {
                 var userData = snapshot.data!;
                 String role = userData['role'];
 
-                CurrentUser currentUser = ; 
+                // Update the CurrentUser instance
+                CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
+                currentUser.updateUser(
+                  newGmail: user.email!,
+                  newName: userData['name'] ?? '',
+                  newAccountType: role,
+                  newClassName: userData['className'] ?? '',
+                  newSection: userData['section'] ?? '',
+                );
 
+                // Navigate to the appropriate dashboard
                 if (role == 'management') {
                   return const ManagementDashboard();
                 } else if (role == 'teacher') {
