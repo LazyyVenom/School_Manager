@@ -3,38 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/auth/auth_gate.dart';
 import 'package:school_manager/auth/auth_service.dart';
 import 'package:school_manager/firebase_options.dart';
+import 'package:school_manager/additional_features.dart';
 import 'package:provider/provider.dart';
-
-class NoAnimationPageTransitionsBuilder extends PageTransitionsBuilder {
-  @override
-  Widget buildTransitions<T>(
-      PageRoute<T> route, BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    return child;
-  }
-}
-class CurrentUser extends ChangeNotifier {
-  String? gmail;
-  String? name;
-  String? accountType; // e.g., "Student", "Teacher", "Admin"
-  String? className;
-  String? section;
-
-  void updateUser({
-    required String newGmail,
-    required String newName,
-    required String newAccountType,
-    required String newClassName,
-    required String newSection,
-  }) {
-    gmail = newGmail;
-    name = newName;
-    accountType = newAccountType;
-    className = newClassName;
-    section = newSection;
-
-    notifyListeners();
-  }
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

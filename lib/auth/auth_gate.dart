@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:school_manager/dashboards/student_dashboard.dart';
 import 'package:school_manager/dashboards/teacher_dashboard.dart';
 import 'package:school_manager/dashboards/management_dashboard.dart';
+import 'package:school_manager/main.dart';
 import 'package:school_manager/pages/login_page.dart';
 
 class AuthGate extends StatelessWidget {
@@ -42,6 +43,8 @@ class AuthGate extends StatelessWidget {
 
                 var userData = snapshot.data!;
                 String role = userData['role'];
+
+                CurrentUser currentUser = ; 
 
                 if (role == 'management') {
                   return const ManagementDashboard();
