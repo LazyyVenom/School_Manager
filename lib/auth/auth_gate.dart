@@ -51,7 +51,7 @@ class AuthGate extends StatelessWidget {
                   newGmail: user.email!,
                   newName: userData['name'] ?? '',
                   newAccountType: role,
-                  newClassName: userData['className'] ?? '',
+                  newClassName: userData['class'] ?? '',
                   newSection: userData['section'] ?? '',
                 );
 
