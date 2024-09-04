@@ -108,10 +108,14 @@ class _LoginPageState extends State<LoginPage> {
       // Sign in with Firebase Authentication
       final user = await authService.signInWithEmailAndPassword(email, password);
 
+      if (user == null) {
+        throw("ID Password Didn't Matched");
+      }
+
       // Fetch user role from Firestore using email as UID
       final userDoc = await FirebaseFirestore.instance
           .collection('users')
-          .doc(user!.email)
+          .doc(user.email)
           .get();
 
       if (userDoc.exists) {
