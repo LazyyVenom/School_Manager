@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 
 class ChatPage extends StatefulWidget {
-  // Use an initializer list to assign the value of 'type'
   const ChatPage({super.key, required this.type});
 
   final String type;
@@ -14,54 +13,62 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  Widget _buildUserList(DocumentSnapshot document, CurrentUser currentUser) {
+  // Method to build the user list from Firestore
+  Widget _buildUserList(CurrentUser currentUser) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('users').snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Text('Got Some Error While Loading List');
+          return const Center(child: Text('Error loading users.'));
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...');
+          return const Center(child: CircularProgressIndicator());
         }
 
         return ListView(
-          children: snapshot.data!.docs
-              .map<Widget>((doc) => _buildUserListItem(doc, currentUser))
-              .toList(),
+          children: snapshot.data!.docs.map((DocumentSnapshot document) {
+            return _buildUserListItem(document, currentUser);
+          }).toList(),
         );
       },
     );
   }
 
-  Widget _buildUserListItem(
-      DocumentSnapshot document, CurrentUser currentUser) {
+  // Method to build each user list item
+  Widget _buildUserListItem(DocumentSnapshot document, CurrentUser currentUser) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
+    // Exclude current user from the list
     if (currentUser.gmail != data['email']) {
       return ListTile(
-        title: data['email'],
+        title: Text(data['email'] ?? 'Unknown User'),
         onTap: () {
-          Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const ChatPage(type: 'Raj'))
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatPage(
+                type: data['email'], 
+              ),
+            ),
           );
         },
       );
-    }
-    else {
-      return const Placeholder();
+    } else {
+      return const SizedBox.shrink(); // Skip the current user
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Get the current user from the Provider
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Choose A Chat'),
       ),
-      body: _buildUserList(document, currentUser),
+      body: _buildUserList(currentUser), // Load the user list
     );
   }
 }
