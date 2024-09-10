@@ -26,43 +26,9 @@ class _ChatPageState extends State<ChatPage> {
 
   // Controller to handle the input text
   final TextEditingController _controller = TextEditingController();
-
-  Widget _buildUserList(DocumentSnapshot document, CurrentUser currentUser) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Text('Got Some Error While Loading List');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text('Loading...');
-        }
-
-        return ListView(
-          children: snapshot.data!.docs
-              .map<Widget>((doc) => _buildUserListItem(doc, currentUser))
-              .toList(),
-        );
-      },
-    );
-  }
-
-  Widget _buildUserListItem(
-      DocumentSnapshot document, CurrentUser currentUser) {
-    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-    if (currentUser.gmail != data['email']) {
-      return ListTile(
-        title: data['email'],
-        onTap: () {},
-      );
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-    CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text("Messaging ${widget.type}"),
