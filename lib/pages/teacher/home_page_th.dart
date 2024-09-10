@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:school_manager/chat/chatter.dart';
 import 'package:school_manager/pages/teacher/student_id_create.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -143,7 +144,7 @@ class HomePageTh extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const ChatPage(type: 'Students')));
+                                        const ChatsDisplay(type: 'Students')));
                           },
                           child: Card(
                             color: Colors.deepPurple[50],

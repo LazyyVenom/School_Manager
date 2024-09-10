@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/auth/auth_service.dart';
 
 class StudentRegisterPage extends StatefulWidget {
@@ -16,8 +17,7 @@ class _StudentRegisterPageState extends State<StudentRegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  String? _selectedClass;
-  String? _selectedSection;
+
   bool _isLoading = false;
 
   @override
@@ -103,12 +103,13 @@ class _StudentRegisterPageState extends State<StudentRegisterPage> {
     });
 
     final authService = Provider.of<AuthService>(context, listen: false);
+    CurrentUser currentUser = Provider.of<CurrentUser>(context,listen: false);
 
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
     String name = _nameController.text.trim();
-    String? classAssigned = _selectedClass;
-    String? section = _selectedSection;
+    String? classAssigned = currentUser.className;
+    String? section = currentUser.section;
 
     if (classAssigned == null || section == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -154,10 +155,6 @@ class _StudentRegisterPageState extends State<StudentRegisterPage> {
       _emailController.clear();
       _nameController.clear();
       _passwordController.clear();
-      setState(() {
-        _selectedClass = null;
-        _selectedSection = null;
-      });
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

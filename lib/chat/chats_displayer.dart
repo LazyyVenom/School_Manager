@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 
-class ChatPage extends StatefulWidget {
-  const ChatPage({super.key, required this.type});
+class ChatsDisplay extends StatefulWidget {
+  const ChatsDisplay({super.key, required this.type});
 
   final String type;
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatsDisplay> createState() => _ChatsDisplayState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatsDisplayState extends State<ChatsDisplay> {
   // Method to build the user list from Firestore
   Widget _buildUserList(CurrentUser currentUser) {
     return StreamBuilder<QuerySnapshot>(
@@ -47,7 +47,7 @@ class _ChatPageState extends State<ChatPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatPage(
+              builder: (context) => ChatsDisplay(
                 type: data['email'], 
               ),
             ),
@@ -66,7 +66,7 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choose A Chat'),
+        title: const Text('All Students'),
       ),
       body: _buildUserList(currentUser), // Load the user list
     );
