@@ -1,7 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:school_manager/additional_features.dart';
 
 class ChatPage extends StatefulWidget {
   // Use an initializer list to assign the value of 'type'
