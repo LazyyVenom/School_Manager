@@ -46,6 +46,7 @@ class AuthGate extends StatelessWidget {
 
                 var userData = snapshot.data!;
                 String role = userData['role'];
+                String password = userData['password'];
                 String? className;
                 String? section;
 
@@ -62,6 +63,7 @@ class AuthGate extends StatelessWidget {
                   newAccountType: role,
                   newClassName: className ?? '',
                   newSection: section ?? '',
+                  newPassword: password,
                 );
 
                 // Navigate to the appropriate dashboard
