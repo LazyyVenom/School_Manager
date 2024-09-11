@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chatter.dart';
 import 'package:school_manager/pages/management/teacher_id_create.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,6 +28,8 @@ class HomePageMt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    CurrentUser currentUser = Provider.of<CurrentUser>(context,listen: false);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -41,7 +45,7 @@ class HomePageMt extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        "Welcome Anubhav",
+                        "Welcome ${currentUser.name}",
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       Text(
