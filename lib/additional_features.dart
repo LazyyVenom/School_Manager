@@ -11,9 +11,10 @@ class NoAnimationPageTransitionsBuilder extends PageTransitionsBuilder {
 class CurrentUser extends ChangeNotifier {
   String? gmail;
   String? name;
-  String? accountType; // e.g., "Student", "Teacher", "Admin"
+  String? accountType;
   String? className;
   String? section;
+  String? password;
 
   void updateUser({
     required String newGmail,
@@ -21,12 +22,14 @@ class CurrentUser extends ChangeNotifier {
     required String newAccountType,
     required String newClassName,
     required String newSection,
+    required String newPassword,
   }) {
     gmail = newGmail;
     name = newName;
     accountType = newAccountType;
     className = newClassName;
     section = newSection;
+    password = newPassword;
 
     notifyListeners();
   }

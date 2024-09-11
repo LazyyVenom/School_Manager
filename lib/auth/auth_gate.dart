@@ -6,7 +6,7 @@ import 'package:school_manager/dashboards/student_dashboard.dart';
 import 'package:school_manager/dashboards/teacher_dashboard.dart';
 import 'package:school_manager/dashboards/management_dashboard.dart';
 import 'package:school_manager/pages/login_page.dart';
-import 'package:school_manager/additional_features.dart'; 
+import 'package:school_manager/additional_features.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -36,7 +36,9 @@ class AuthGate extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (snapshot.hasError || !snapshot.hasData || !snapshot.data!.exists) {
+                if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    !snapshot.data!.exists) {
                   return const Center(
                     child: Text("Error loading user data."),
                   );
@@ -44,15 +46,22 @@ class AuthGate extends StatelessWidget {
 
                 var userData = snapshot.data!;
                 String role = userData['role'];
+                String? className;
+                String? section;
 
-                // Update the CurrentUser instance
-                CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
+                if (role != 'management') {
+                  className = userData['class'];
+                  section = userData['section'];
+                } 
+
+                CurrentUser currentUser =
+                    Provider.of<CurrentUser>(context, listen: false);
                 currentUser.updateUser(
                   newGmail: user.email!,
                   newName: userData['name'] ?? '',
                   newAccountType: role,
-                  newClassName: userData['class'] ?? '',
-                  newSection: userData['section'] ?? '',
+                  newClassName: className ?? '',
+                  newSection: section ?? '',
                 );
 
                 // Navigate to the appropriate dashboard

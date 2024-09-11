@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/auth/auth_service.dart';
 
 class TeacherRegisterPage extends StatefulWidget {
@@ -147,6 +148,7 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
     });
 
     final authService = Provider.of<AuthService>(context, listen: false);
+    final currentUser = Provider.of<CurrentUser>(context, listen: false);
 
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
@@ -181,7 +183,13 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
         'role': 'teacher',
         'class': classAssigned,
         'section': section,
+        'password': password,
       });
+
+      await authService.signInWithEmailAndPassword(
+      currentUser.gmail!, 
+      currentUser.password!,
+    );
 
       // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(

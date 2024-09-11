@@ -108,7 +108,6 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text.trim();
 
     try {
-      // Sign in with Firebase Authentication
       final user =
           await authService.signInWithEmailAndPassword(email, password);
 
@@ -125,14 +124,22 @@ class _LoginPageState extends State<LoginPage> {
       if (userDoc.exists) {
         final role = userDoc.data()?['role'];
 
-        // Navigate based on role
         if (context.mounted) {
+          String? className;
+          String? section;
+
+          if (role != 'management') {
+            className = userDoc['class'] ?? '';
+            section = userDoc['section'] ?? '';
+          }
+
           currentUser.updateUser(
             newGmail: user.email,
             newName: userDoc['name'] ?? '',
             newAccountType: role,
-            newClassName: userDoc['className'] ?? '',
-            newSection: userDoc['section'] ?? '',
+            newClassName: className ?? '',
+            newSection: section ?? '',
+            newPassword: password,
           );
 
           if (role == 'student') {
