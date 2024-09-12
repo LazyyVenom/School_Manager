@@ -15,7 +15,6 @@ class _ChatPageState extends State<ChatPage> {
   final List<String> messages = [
     "Hello!",
     "How are you?",
-    "I'm learning Flutter.",
     "This is a scrollable chat interface.",
     "What are you working on?",
     "Let's build something cool!",
