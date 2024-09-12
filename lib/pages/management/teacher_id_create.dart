@@ -186,6 +186,8 @@ class _TeacherRegisterPageState extends State<TeacherRegisterPage> {
         'password': password,
       });
 
+      await authService.signOut();
+
       await authService.signInWithEmailAndPassword(
       currentUser.gmail!, 
       currentUser.password!,

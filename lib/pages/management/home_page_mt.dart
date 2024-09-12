@@ -28,8 +28,7 @@ class HomePageMt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    CurrentUser currentUser = Provider.of<CurrentUser>(context,listen: false);
-
+    CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
 
     return Scaffold(
       body: Padding(
@@ -45,9 +44,14 @@ class HomePageMt extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      Text(
-                        "Welcome ${currentUser.name}",
-                        style: Theme.of(context).textTheme.headlineMedium,
+                      Flexible(
+                        child: Text(
+                          "Welcome ${currentUser.name}",
+                          style: Theme.of(context).textTheme.headlineMedium,
+                          overflow: TextOverflow
+                              .ellipsis, // This adds the ellipsis (...) if text overflows
+                          maxLines: 1, // Limits the text to a single line
+                        ),
                       ),
                       Text(
                         "Administrator",
