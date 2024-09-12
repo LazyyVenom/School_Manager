@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:school_manager/chat/chatter.dart';
+import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -117,7 +117,7 @@ class HomePage extends StatelessWidget {
                           onTap: () {
                             Navigator.push(
                               context, MaterialPageRoute(
-                                builder: (context) => const ChatPage(type: "Teacher")
+                                builder: (context) => const ChatsDisplay(type: "Teachers")
                                 )
                               );
                           },
@@ -145,7 +145,7 @@ class HomePage extends StatelessWidget {
                           onTap: () {
                             Navigator.push(
                               context, MaterialPageRoute(
-                                builder: (context) => const ChatPage(type: 'Management')
+                                builder: (context) => const ChatsDisplay(type: 'Management')
                                 )
                               );
                           },
