@@ -85,6 +85,7 @@ class _ChatsDisplayState extends State<ChatsDisplay> {
               MaterialPageRoute(
                 builder: (context) => ChatPage(
                   type: data['name'], // Pass user email to ChatsDisplay
+                  email: data['email'],
                 ),
               ),
             );
