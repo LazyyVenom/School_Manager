@@ -21,13 +21,13 @@ class Notification {
   }
 }
 
-class ChatService extends ChangeNotifier {
+class NotificationService extends ChangeNotifier {
   // Get Instance of firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // SEND notification
   Future<void> sendNotification(
-      String classRec, String receiverClasses, String notification) async {
+      String classRec, String mySection, String notification) async {
     final timestamp = Timestamp.now();
 
     Notification newNotification = Notification(
@@ -37,16 +37,16 @@ class ChatService extends ChangeNotifier {
 
     await _firestore
         .collection('notifications')
-        .doc(classRec)
+        .doc("$classRec$mySection")
         .collection('notifications')
         .add(newNotification.toMap());
   }
 
   // Get notifications
-  Stream<QuerySnapshot> getNotifications(String myClass) {
+  Stream<QuerySnapshot> getNotifications(String myClass, String mySection) {
     return _firestore
         .collection('notifications')
-        .where('classRec', whereIn: [myClass, 'all'])
+        .where('classRec', whereIn: ['$myClass$mySection', 'all'])
         .orderBy('timestamp', descending: true)
         .snapshots();
   }

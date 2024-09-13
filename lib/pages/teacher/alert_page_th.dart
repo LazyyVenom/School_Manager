@@ -1,10 +1,30 @@
-import "package:flutter/material.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
+import 'package:school_manager/notification_service.dart';
 
-class AlertPageTh extends StatelessWidget {
-  const AlertPageTh({super.key});
+class AlertPageTh extends StatefulWidget {
+  const AlertPageTh({Key? key}) : super(key: key);
+
+  @override
+  State<AlertPageTh> createState() => _AlertPageThState();
+}
+
+class _AlertPageThState extends State<AlertPageTh> {
+  final NotificationService _notificationService = NotificationService();
+  final TextEditingController _notificationController = TextEditingController();
+
+  @override
+  void dispose() {
+    _notificationController.dispose(); // Dispose the controller to avoid memory leaks
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Provider.of<CurrentUser>(context, listen: false);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -21,31 +41,54 @@ class AlertPageTh extends StatelessWidget {
                 const Divider(),
                 const SizedBox(height: 6),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: 15,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(1),
-                              color: Colors.deepPurple[50],
-                              child: ListTile(
-                                leading: Icon(
-                                  Icons.notifications,
-                                  color: Colors.deepPurple[300],
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: _notificationService.getNotifications(
+                        currentUser.className!, currentUser.section!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return const Center(
+                            child: Text('No notifications found'));
+                      }
+
+                      final notifications = snapshot.data!.docs;
+
+                      return ListView.builder(
+                        itemCount: notifications.length,
+                        itemBuilder: (context, index) {
+                          var notification = notifications[index];
+                          return Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(1),
+                                  color: Colors.deepPurple[50],
+                                  child: ListTile(
+                                    leading: Icon(
+                                      Icons.notifications,
+                                      color: Colors.deepPurple[300],
+                                    ),
+                                    title: Text(notification['notification']),
+                                    subtitle: Text(
+                                        "Added At: ${notification['subtitle']}"),
+                                    trailing: Icon(
+                                      Icons.arrow_circle_right,
+                                      color: Colors.deepPurple[300],
+                                    ),
+                                  ),
                                 ),
-                                title: Text("Home Work for Grade $index"),
-                                subtitle: Text("Sent On: Regarding Office Work for $index"),
-                                trailing: Icon(
-                                  Icons.arrow_circle_right,
-                                  color: Colors.deepPurple[300],
-                                ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -57,7 +100,56 @@ class AlertPageTh extends StatelessWidget {
               right: 16,
               child: FloatingActionButton(
                 onPressed: () {
-                  // Add your onPressed action here
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Add Notification'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 10),
+                            TextField(
+                              controller: _notificationController,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Notification Details',
+                              ),
+                            ),
+                          ],
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Close'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (_notificationController.text.isNotEmpty) {
+                                _notificationService.sendNotification(
+                                  currentUser.className!,
+                                  currentUser.section!,
+                                  _notificationController.text,
+                                );
+                                Navigator.of(context).pop(); // Close dialog
+                                _notificationController.clear(); // Clear text field
+                              } else {
+                                // Optionally, show an error if the field is empty
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Please enter notification details'),
+                                  ),
+                                );
+                              }
+                            },
+                            child: const Text('Enter'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 backgroundColor: Colors.deepPurple,
                 child: const Icon(Icons.add),
