@@ -107,6 +107,8 @@ class _LoginPageState extends State<LoginPage> {
     String email = _usernameController.text.trim();
     String password = _passwordController.text.trim();
 
+    print("Email: $email Password: $password");
+
     try {
       final user =
           await authService.signInWithEmailAndPassword(email, password);
