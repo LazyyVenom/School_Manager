@@ -6,12 +6,14 @@ class Assignment {
   final String assignment;
   final Timestamp timestamp;
   final String details;
+  final String type;
 
   Assignment({
     required this.classRec,
     required this.timestamp,
     required this.assignment,
     required this.details,
+    required this.type,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class Assignment {
       'timestamp': timestamp,
       'assignment': assignment,
       'details': details,
+      'type': type,
     };
   }
 }
@@ -30,11 +33,11 @@ class AssignmentService extends ChangeNotifier {
 
   // Add Assignments
   Future<void> addAssignment(
-      String classRec, String mySection, String assignment, String details) async {
+      String classRec, String mySection, String assignment, String details, String type) async {
     final timestamp = Timestamp.now();
 
     Assignment newAssignment = Assignment(
-        classRec: classRec, timestamp: timestamp, assignment: assignment, details: details);
+        classRec: classRec, timestamp: timestamp, assignment: assignment, details: details, type:type);
 
     await _firestore
         .collection('alerts')
