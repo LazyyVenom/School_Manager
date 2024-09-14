@@ -141,11 +141,10 @@ class _AlertPageThState extends State<AlertPageTh> {
                                   currentUser.section!,
                                   _notificationController.text,
                                 );
-                                Navigator.of(context).pop(); // Close dialog
+                                Navigator.of(context).pop();
                                 _notificationController
-                                    .clear(); // Clear text field
+                                    .clear(); 
                               } else {
-                                // Optionally, show an error if the field is empty
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
