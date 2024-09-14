@@ -17,7 +17,8 @@ class _AlertPageThState extends State<AlertPageTh> {
 
   @override
   void dispose() {
-    _notificationController.dispose(); // Dispose the controller to avoid memory leaks
+    _notificationController
+        .dispose(); // Dispose the controller to avoid memory leaks
     super.dispose();
   }
 
@@ -43,7 +44,9 @@ class _AlertPageThState extends State<AlertPageTh> {
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
                     stream: _notificationService.getNotifications(
-                        currentUser.className!, currentUser.section!),
+                      currentUser.className!,
+                      currentUser.section!,
+                    ),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
@@ -53,7 +56,9 @@ class _AlertPageThState extends State<AlertPageTh> {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       }
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      if (!snapshot.hasData ||
+                          snapshot.data == null ||
+                          snapshot.data!.docs.isEmpty) {
                         return const Center(
                             child: Text('No notifications found'));
                       }
@@ -76,9 +81,11 @@ class _AlertPageThState extends State<AlertPageTh> {
                                       Icons.notifications,
                                       color: Colors.deepPurple[300],
                                     ),
-                                    title: Text(notification['notification']),
+                                    title: Text(notification['notification'] ??
+                                        'No Title'),
                                     subtitle: Text(
-                                        "Added At: ${notification['subtitle']}"),
+                                      "Added At: ${DateFormat('yyyy-MM-dd').format(notification['timestamp'].toDate())}",
+                                    ),
                                     trailing: Icon(
                                       Icons.arrow_circle_right,
                                       color: Colors.deepPurple[300],
@@ -134,12 +141,14 @@ class _AlertPageThState extends State<AlertPageTh> {
                                   _notificationController.text,
                                 );
                                 Navigator.of(context).pop(); // Close dialog
-                                _notificationController.clear(); // Clear text field
+                                _notificationController
+                                    .clear(); // Clear text field
                               } else {
                                 // Optionally, show an error if the field is empty
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Please enter notification details'),
+                                    content: Text(
+                                        'Please enter notification details'),
                                   ),
                                 );
                               }

@@ -31,9 +31,7 @@ class NotificationService extends ChangeNotifier {
     final timestamp = Timestamp.now();
 
     Notification newNotification = Notification(
-        classRec: classRec,
-        timestamp: timestamp,
-        notification: notification);
+        classRec: classRec, timestamp: timestamp, notification: notification);
 
     await _firestore
         .collection('notifications')
@@ -46,7 +44,8 @@ class NotificationService extends ChangeNotifier {
   Stream<QuerySnapshot> getNotifications(String myClass, String mySection) {
     return _firestore
         .collection('notifications')
-        .where('classRec', whereIn: ['$myClass$mySection', 'all'])
+        .doc("$myClass$mySection")
+        .collection('notifications')
         .orderBy('timestamp', descending: true)
         .snapshots();
   }

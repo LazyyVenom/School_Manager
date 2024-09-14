@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:school_manager/pages/teacher/student_id_create.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +19,7 @@ void _navigateToLoginPage(BuildContext context) {
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => const LoginPage()),
-    (Route<dynamic> route) => false, // This removes all the previous routes
+    (Route<dynamic> route) => false,
   );
 }
 
@@ -26,6 +28,7 @@ class HomePageTh extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _current_user = Provider.of<CurrentUser>(context, listen: false);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -40,12 +43,14 @@ class HomePageTh extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      Text(
-                        "Welcome Anubhav",
-                        style: Theme.of(context).textTheme.headlineMedium,
+                      Expanded(
+                        child: Text(
+                          "Welcome ${_current_user.name}",
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
                       ),
                       Text(
-                        "Class Teacher X Std B",
+                        "Class Teacher ${_current_user.className} Std ${_current_user.section}",
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ],
@@ -114,8 +119,8 @@ class HomePageTh extends StatelessWidget {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ChatsDisplay(type: 'Management')));
+                                    builder: (context) => const ChatsDisplay(
+                                        type: 'Management')));
                           },
                           child: Card(
                               color: Colors.deepPurple[50],
