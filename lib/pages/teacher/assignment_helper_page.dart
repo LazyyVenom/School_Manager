@@ -52,6 +52,7 @@ class _AddAssignmentPageState extends State<AddAssignmentPage> {
                   labelText: 'Details',
                 ),
               ),
+              
               const SizedBox(height: 10),
               // DropdownButton for Homework/Assignment
               DropdownButtonFormField<String>(
