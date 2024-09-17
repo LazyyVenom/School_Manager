@@ -46,6 +46,16 @@ class _AdminPanelState extends State<AdminPanel> {
               registerPage: TeacherRegisterPage(),
               icon: Icons.person_4,
             ),
+            CreatorWidget(
+              title: "View Management Accounts",
+              registerPage: TeacherRegisterPage(),
+              icon: Icons.manage_accounts,
+            ),
+            CreatorWidget(
+              title: "Create Management Account",
+              registerPage: TeacherRegisterPage(),
+              icon: Icons.manage_accounts,
+            ),
           ],
         ),
       ),
