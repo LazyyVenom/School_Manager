@@ -55,6 +55,15 @@ android {
         multiDexEnabled true
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'key'
+            keyPassword '1234567890'
+            storeFile file("C:/Users/Anubhav Choubey/Documents/Own_Projects/school_manager/key.jks")
+            storePassword '1234567890'
+        }
+    }
+
     buildTypes {
         release {
             // Enable shrinking, obfuscation, and optimization for release builds
