@@ -5,6 +5,7 @@ import 'package:school_manager/auth/auth_service.dart';
 import 'package:school_manager/firebase_options.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:provider/provider.dart';
+import 'package:school_manager/pages/management/admin_panel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +42,7 @@ class SchoolManagerApp extends StatelessWidget {
           },
         ),
       ),
-      home: const AuthGate(),
+      home: const AdminPanel(),
     );
   }
 }
@@ -56,6 +57,6 @@ class SchoolManager extends StatefulWidget {
 class _SchoolManagerState extends State<SchoolManager> {
   @override
   Widget build(BuildContext context) {
-    return const AuthGate();
+    return const AdminPanel();
   }
 }
