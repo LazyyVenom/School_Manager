@@ -1,4 +1,6 @@
 import "package:flutter/material.dart";
+import "package:school_manager/pages/management/class_register.dart";
+import "package:school_manager/pages/management/section_register.dart";
 import "package:school_manager/pages/management/teacher_id_create.dart";
 import "package:school_manager/pages/teacher/student_id_create.dart";
 
@@ -33,12 +35,12 @@ class _AdminPanelState extends State<AdminPanel> {
             ),
             CreatorWidget(
               title: "Create Class",
-              registerPage: TeacherRegisterPage(),
+              registerPage: ClassRegisterPage(),
               icon: Icons.class_,
             ),
             CreatorWidget(
               title: "Create Section",
-              registerPage: TeacherRegisterPage(),
+              registerPage: SectionRegisterPage(),
               icon: Icons.account_balance,
             ),
             CreatorWidget(
