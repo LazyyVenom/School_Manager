@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firebase Firestore package
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/auth/auth_service.dart';
 
 class NurseRegisterPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class _NurseRegisterPageState extends State<NurseRegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Register Nurse"),
@@ -67,7 +69,11 @@ class _NurseRegisterPageState extends State<NurseRegisterPage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _isLoading ? null : _registerNurse,
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        _registerNurse(currentUser);
+                      },
                 style: ElevatedButton.styleFrom(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -92,7 +98,7 @@ class _NurseRegisterPageState extends State<NurseRegisterPage> {
     );
   }
 
-  void _registerNurse() async {
+  void _registerNurse(CurrentUser currentUser) async {
     // Dismiss the keyboard
     FocusScope.of(context).unfocus();
 
@@ -117,6 +123,13 @@ class _NurseRegisterPageState extends State<NurseRegisterPage> {
         'password': name,
         'role': 'nurse',
       });
+
+      await authService.signOut();
+
+      await authService.signInWithEmailAndPassword(
+        currentUser.gmail!,
+        currentUser.password!,
+      );
 
       // Show a success message
       ScaffoldMessenger.of(context).showSnackBar(
