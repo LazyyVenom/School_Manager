@@ -49,4 +49,13 @@ class NotificationService extends ChangeNotifier {
         .orderBy('timestamp', descending: true)
         .snapshots();
   }
+
+  Future<void> deleteNotification(String docId, String docName) async {
+    await _firestore
+        .collection('alerts')
+        .doc(docName)
+        .collection('notifications')
+        .doc(docId)
+        .delete();
+  }
 }
