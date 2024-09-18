@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart'; // Import permission handler
 import 'package:school_manager/auth/auth_gate.dart';
 import 'package:school_manager/auth/auth_service.dart';
 import 'package:school_manager/firebase_options.dart';
@@ -9,8 +8,6 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await _requestPermissions();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
@@ -26,18 +23,6 @@ void main() async {
       child: const SchoolManagerApp(),
     ),
   );
-}
-
-Future<void> _requestPermissions() async {
-  final status = await [
-    Permission.camera,
-    Permission.storage,
-  ].request();
-
-  if (status[Permission.camera]!.isDenied ||
-      status[Permission.storage]!.isDenied) {
-    print('Some permissions are denied.');
-  }
 }
 
 class SchoolManagerApp extends StatelessWidget {

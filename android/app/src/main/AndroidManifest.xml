@@ -1,10 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Permissions for accessing external storage -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
-    <!-- Permission for using the camera -->
-    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="school_manager"
         android:name="${applicationName}"
