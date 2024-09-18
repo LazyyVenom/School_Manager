@@ -208,10 +208,6 @@ class HomePageTh extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
                       Expanded(
                         child: InkWell(
                           onTap: () {
@@ -233,7 +229,7 @@ class HomePageTh extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Icon(
-                                    Icons.assignment_ind,
+                                    Icons.admin_panel_settings,
                                     size: 70,
                                   ),
                                 )
@@ -243,7 +239,7 @@ class HomePageTh extends StatelessWidget {
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
