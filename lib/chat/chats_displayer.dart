@@ -6,9 +6,7 @@ import 'package:school_manager/chat/chatter.dart';
 
 class ChatsDisplay extends StatefulWidget {
   const ChatsDisplay({super.key, required this.type});
-
   final String type;
-
   @override
   State<ChatsDisplay> createState() => _ChatsDisplayState();
 }
@@ -39,12 +37,9 @@ class _ChatsDisplayState extends State<ChatsDisplay> {
     );
   }
 
-  // Method to build each user list item
   Widget _buildUserListItem(
       DocumentSnapshot document, CurrentUser currentUser) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-    // Exclude current user from the list
 
     if ((currentUser.gmail != data['email']) & (widget.type.toLowerCase().contains(data['role']))) {
       return Card(
@@ -71,7 +66,7 @@ class _ChatsDisplayState extends State<ChatsDisplay> {
                 ),
           ),
           subtitle: Text(
-            data['email'] ?? 'Role: Unknown', // Example additional data
+            data['email'] ?? 'Role: Unknown',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           trailing: Icon(
@@ -84,7 +79,7 @@ class _ChatsDisplayState extends State<ChatsDisplay> {
               context,
               MaterialPageRoute(
                 builder: (context) => ChatPage(
-                  type: data['name'], // Pass user email to ChatsDisplay
+                  type: data['name'],
                   email: data['email'],
                 ),
               ),
@@ -93,20 +88,19 @@ class _ChatsDisplayState extends State<ChatsDisplay> {
         ),
       );
     } else {
-      return const SizedBox.shrink(); // Skip the current user
+      return const SizedBox.shrink();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get the current user from the Provider
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Contact ${widget.type}'),
       ),
-      body: _buildUserList(currentUser), // Load the user list
+      body: _buildUserList(currentUser),
     );
   }
 }
