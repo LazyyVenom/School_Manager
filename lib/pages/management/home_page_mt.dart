@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
-import 'package:school_manager/pages/management/teacher_id_create.dart';
+import 'package:school_manager/pages/management/admin_panel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -188,7 +188,7 @@ class HomePageMt extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      const TeacherRegisterPage()),
+                                      const AdminPanel()),
                             );
                           },
                           child: Card(
@@ -197,7 +197,7 @@ class HomePageMt extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
-                                  child: Text("Create Teacher's Account"),
+                                  child: Text("Admin Panel"),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
