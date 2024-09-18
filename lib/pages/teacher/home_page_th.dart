@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:school_manager/pages/teacher/student_id_create.dart';
+import 'package:school_manager/pages/teacher/teacher_panel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -194,6 +195,40 @@ class HomePageTh extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Text("Create Student's Account"),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.assignment_ind,
+                                    size: 70,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const TeacherPanel(),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            color: Colors.deepPurple[50],
+                            child: const Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text("Teacher's Panel"),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
