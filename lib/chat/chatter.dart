@@ -30,7 +30,8 @@ class _ChatPageState extends State<ChatPage> {
 
     try {
       String fileName = basename(_imageFile!.path); // Get file name
-      Reference storageRef = FirebaseStorage.instance.ref().child('chat_images/$fileName');
+      Reference storageRef =
+          FirebaseStorage.instance.ref().child('chat_images/$fileName');
 
       // Upload image to Firebase Storage
       UploadTask uploadTask = storageRef.putFile(_imageFile!);
@@ -82,7 +83,8 @@ class _ChatPageState extends State<ChatPage> {
 
     // Stream of messages between the current user and the recipient
     Stream<QuerySnapshot> messageStream = _chatService.getMessages(
-      currentUser.gmail!, widget.email,
+      currentUser.gmail!,
+      widget.email,
     );
 
     return Scaffold(
@@ -109,8 +111,10 @@ class _ChatPageState extends State<ChatPage> {
                   reverse: true, // Show latest messages at the bottom
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    var messageData = messages[index].data() as Map<String, dynamic>;
-                    var isCurrentUser = messageData['senderEmail'] == currentUser.gmail;
+                    var messageData =
+                        messages[index].data() as Map<String, dynamic>;
+                    var isCurrentUser =
+                        messageData['senderEmail'] == currentUser.gmail;
 
                     // Check if the message is an image or text
                     bool isImageMessage = messageData['isImage'] ?? false;
@@ -137,7 +141,8 @@ class _ChatPageState extends State<ChatPage> {
                                   height: 150,
                                   fit: BoxFit.cover,
                                 )
-                              : Text(messageData['content'] ?? ''), // Display text message
+                              : Text(messageData['content'] ??
+                                  ''), // Display text message
                         ),
                       ),
                     );
@@ -152,18 +157,22 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.camera_alt, color: Colors.deepPurple),
-                  onPressed: () => _captureImageWithCamera(currentUser.gmail!), // Capture image with camera
+                  onPressed: () => _captureImageWithCamera(
+                      currentUser.gmail!), // Capture image with camera
                 ),
                 IconButton(
                   icon: const Icon(Icons.attach_file, color: Colors.deepPurple),
-                  onPressed: () => _pickImageFromGallery(currentUser.gmail!), // Pick image from gallery
+                  onPressed: () => _pickImageFromGallery(
+                      currentUser.gmail!), // Pick image from gallery
                 ),
                 Expanded(
                   child: TextField(
                     controller: _controller,
                     decoration: const InputDecoration(
                       hintText: "Type a message",
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
+                      ),
                     ),
                   ),
                 ),
@@ -177,8 +186,8 @@ class _ChatPageState extends State<ChatPage> {
                       // Send the text message using ChatService
                       await _chatService.sendTextMessage(
                         currentUser.gmail!, // Sender
-                        widget.email,       // Receiver
-                        _controller.text,   // Message
+                        widget.email, // Receiver
+                        _controller.text, // Message
                       );
                       _controller.clear(); // Clear the text field
                     }
