@@ -228,6 +228,7 @@ class _StudentRegisterPageState extends State<StudentRegisterPage> {
       await FirebaseFirestore.instance.collection('users').doc(email).set({
         'email': email,
         'name': name,
+        'password': password,
         'role': 'student',
         'class': classAssigned,
         'section': section,

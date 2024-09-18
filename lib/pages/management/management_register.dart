@@ -115,6 +115,7 @@ class _ManagementRegisterPageState extends State<ManagementRegisterPage> {
         'email': email,
         'name': name,
         'role': 'management',
+        'password': password,
       });
 
       // Show a success message

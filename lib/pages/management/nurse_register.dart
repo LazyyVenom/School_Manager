@@ -114,6 +114,7 @@ class _NurseRegisterPageState extends State<NurseRegisterPage> {
       await FirebaseFirestore.instance.collection('users').doc(email).set({
         'email': email,
         'name': name,
+        'password': name,
         'role': 'nurse',
       });
 
