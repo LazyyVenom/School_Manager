@@ -73,7 +73,6 @@ class CreatorWidget extends StatelessWidget {
   final IconData icon;
   final Widget registerPage;
 
-  // Constructor with named parameters and required keyword
   const CreatorWidget({
     required this.title,
     required this.icon,
