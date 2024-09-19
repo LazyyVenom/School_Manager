@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:school_manager/pages/management/nurse_register.dart";
 import "package:school_manager/pages/management/section_register.dart";
 import "package:school_manager/pages/teacher/exam_register.dart";
+import "package:school_manager/pages/teacher/student_selector.dart";
 import "package:school_manager/pages/teacher/subject_register.dart";
 
 class TeacherPanel extends StatefulWidget {
@@ -35,7 +36,7 @@ class TeacherPanelState extends State<TeacherPanel> {
             ),
             CreatorWidget(
               title: "Add Student Progress",
-              registerPage: SectionRegisterPage(),
+              registerPage: AddStudentMarksPage(),
               icon: Icons.group_add_sharp,
             ),
             CreatorWidget(
