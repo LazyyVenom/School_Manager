@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "package:school_manager/pages/management/nurse_register.dart";
 import "package:school_manager/pages/teacher/exam_register.dart";
+import "package:school_manager/pages/teacher/progress_student_list.dart";
 import "package:school_manager/pages/teacher/student_selector.dart";
 import "package:school_manager/pages/teacher/subject_register.dart";
 
@@ -19,28 +19,28 @@ class TeacherPanelState extends State<TeacherPanel> {
         title: const Text("Teacher Panel"),
         centerTitle: true,
       ),
-      body: const Padding(
-        padding: EdgeInsets.all(8.0),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            CreatorWidget(
+            const CreatorWidget(
               title: "Create Subject",
               registerPage: SubjectRegisterPage(),
               icon: Icons.subject,
             ),
-            CreatorWidget(
+            const CreatorWidget(
               title: "Create Exam",
               registerPage: ExamCreatePage(),
               icon: Icons.class_,
             ),
-            CreatorWidget(
+            const CreatorWidget(
               title: "Add Student Progress",
               registerPage: AddStudentMarksPage(),
               icon: Icons.group_add_sharp,
             ),
             CreatorWidget(
               title: "Show Students Progress",
-              registerPage: NurseRegisterPage(),
+              registerPage: StudentListPage(),
               icon: Icons.auto_graph,
             ),
           ],

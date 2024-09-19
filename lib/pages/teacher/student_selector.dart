@@ -165,7 +165,7 @@ class _AddStudentMarksPageState extends State<AddStudentMarksPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => AddMarksPage(
-                            studentName: _students[index],
+                            // studentName: _students[index],
                             className: _selectedClass!,
                             sectionName: _selectedSection!,
                           ),

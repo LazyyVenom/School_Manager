@@ -2,12 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AddMarksPage extends StatefulWidget {
-  final String studentName;
   final String className;
   final String sectionName;
 
   const AddMarksPage({
-    required this.studentName,
     required this.className,
     required this.sectionName,
     Key? key,
@@ -19,7 +17,9 @@ class AddMarksPage extends StatefulWidget {
 
 class _AddMarksPageState extends State<AddMarksPage> {
   String? _selectedExam;
+  String? _selectedStudent;
   List<Map<String, dynamic>> _exams = [];
+  List<Map<String, dynamic>> _students = [];
   final TextEditingController _marksController = TextEditingController();
 
   bool _isLoading = false;
@@ -28,6 +28,7 @@ class _AddMarksPageState extends State<AddMarksPage> {
   void initState() {
     super.initState();
     _fetchExams();
+    _fetchStudents(); // Fetch students from the 'users' collection
   }
 
   Future<void> _fetchExams() async {
@@ -67,15 +68,57 @@ class _AddMarksPageState extends State<AddMarksPage> {
     }
   }
 
+  Future<void> _fetchStudents() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Fetch students from 'users' collection where role == 'student'
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .where('role', isEqualTo: 'student')
+              .where('class', isEqualTo: widget.className) // Class filter
+              .where('section', isEqualTo: widget.sectionName) // Section filter
+              .get();
+
+      List<Map<String, dynamic>> studentList = querySnapshot.docs.map((doc) {
+        return {
+          'studentName': doc.data()['name'],
+          'studentId': doc.id,
+        };
+      }).toList();
+
+      setState(() {
+        _students = studentList;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            "Error fetching students: $e",
+            style: const TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.red[200],
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   Future<void> _addMarks() async {
     String marksText = _marksController.text.trim();
     int? marks = int.tryParse(marksText);
 
-    if (_selectedExam == null || marks == null) {
+    if (_selectedStudent == null || _selectedExam == null || marks == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
-            "Please select an exam and enter valid marks",
+            "Please select a student, exam, and enter valid marks",
             style: TextStyle(color: Colors.black),
           ),
           backgroundColor: Colors.red[200],
@@ -92,9 +135,9 @@ class _AddMarksPageState extends State<AddMarksPage> {
       // Adding marks to the 'marks' collection
       await FirebaseFirestore.instance
           .collection('marks')
-          .doc(widget.studentName)
+          .doc(_selectedStudent) // Document ID as student ID
           .set({
-        'studentName': widget.studentName,
+        'studentName': _selectedStudent,
         'class': widget.className,
         'section': widget.sectionName,
         'exam': _selectedExam,
@@ -114,6 +157,7 @@ class _AddMarksPageState extends State<AddMarksPage> {
       _marksController.clear();
       setState(() {
         _selectedExam = null;
+        _selectedStudent = null;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -136,12 +180,34 @@ class _AddMarksPageState extends State<AddMarksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Marks for ${widget.studentName}"),
+        title: const Text("Add Marks"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Student Dropdown
+            DropdownButtonFormField<String>(
+              value: _selectedStudent,
+              decoration: const InputDecoration(
+                labelText: "Select Student",
+                border: OutlineInputBorder(),
+              ),
+              items: _students.map((student) {
+                return DropdownMenuItem<String>(
+                  value: student['studentName'],
+                  child: Text(student['studentName']),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedStudent = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16.0),
+
+            // Exam Dropdown
             DropdownButtonFormField<String>(
               value: _selectedExam,
               decoration: const InputDecoration(
