@@ -1,8 +1,8 @@
 import "package:flutter/material.dart";
-import "package:school_manager/pages/management/class_register.dart";
 import "package:school_manager/pages/management/nurse_register.dart";
 import "package:school_manager/pages/management/section_register.dart";
-import "package:school_manager/pages/teacher/student_id_create.dart";
+import "package:school_manager/pages/teacher/exam_register.dart";
+import "package:school_manager/pages/teacher/subject_register.dart";
 
 class TeacherPanel extends StatefulWidget {
   const TeacherPanel({super.key});
@@ -25,12 +25,12 @@ class TeacherPanelState extends State<TeacherPanel> {
           children: [
             CreatorWidget(
               title: "Create Subject",
-              registerPage: StudentRegisterPage(),
+              registerPage: SubjectRegisterPage(),
               icon: Icons.subject,
             ),
             CreatorWidget(
               title: "Create Exam",
-              registerPage: ClassRegisterPage(),
+              registerPage: ExamCreatePage(),
               icon: Icons.class_,
             ),
             CreatorWidget(
