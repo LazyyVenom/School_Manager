@@ -1,6 +1,5 @@
 import "package:flutter/material.dart";
 import "package:school_manager/pages/management/nurse_register.dart";
-import "package:school_manager/pages/management/section_register.dart";
 import "package:school_manager/pages/teacher/exam_register.dart";
 import "package:school_manager/pages/teacher/student_selector.dart";
 import "package:school_manager/pages/teacher/subject_register.dart";
