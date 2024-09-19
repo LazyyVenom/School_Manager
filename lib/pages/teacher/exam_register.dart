@@ -11,6 +11,7 @@ class ExamCreatePage extends StatefulWidget {
 
 class _ExamCreatePageState extends State<ExamCreatePage> {
   final TextEditingController _highestMarksController = TextEditingController();
+  final TextEditingController _examNameController = TextEditingController();
   DateTime? _selectedDate;
 
   bool _isLoading = false;
@@ -199,6 +200,15 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
             ),
             const SizedBox(height: 16.0),
 
+            TextField(
+              controller: _examNameController,
+              decoration: const InputDecoration(
+                labelText: "Highest Marks",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16.0),
+
             // Date Selector
             GestureDetector(
               onTap: () => _selectDate(context),
@@ -248,6 +258,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
     FocusScope.of(context).unfocus();
 
     String highestMarksText = _highestMarksController.text.trim();
+    String examName = _examNameController.text.trim();
     int? highestMarks = int.tryParse(highestMarksText);
 
     if (_selectedClass == null ||
@@ -302,6 +313,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
         } else {
           // Add the new exam
           exams.add({
+            'examName' : examName,
             'subject': _selectedSubject,
             'highestMarks': highestMarks,
             'date': _selectedDate!.toIso8601String(),
@@ -339,7 +351,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text(
-              "Class, Section, and Exam Registered Successfully!",
+              "Exam Registered Successfully!",
               style: TextStyle(color: Colors.black),
             ),
             backgroundColor: Colors.green[200],
