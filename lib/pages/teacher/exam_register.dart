@@ -203,7 +203,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
             TextField(
               controller: _examNameController,
               decoration: const InputDecoration(
-                labelText: "Highest Marks",
+                labelText: "Exam Name",
                 border: OutlineInputBorder(),
               ),
             ),
@@ -341,6 +341,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
         await examDoc.set({
           'exams': [
             {
+              'examName' : examName,
               'subject': _selectedSubject,
               'highestMarks': highestMarks,
               'date': _selectedDate!.toIso8601String(),

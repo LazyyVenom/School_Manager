@@ -14,7 +14,7 @@ class _AddStudentMarksPageState extends State<AddStudentMarksPage> {
   String? _selectedSection;
   List<String> _classes = [];
   List<String> _sections = [];
-  List<String> _students = [];
+  List<Map<String, String>> _students = []; // Changed to store email along with name
   bool _isLoadingStudents = false;
 
   @override
@@ -78,7 +78,12 @@ class _AddStudentMarksPageState extends State<AddStudentMarksPage> {
           .where('section', isEqualTo: _selectedSection)
           .get();
 
-      List<String> studentList = snapshot.docs.map((doc) => doc['name'] as String).toList();
+      List<Map<String, String>> studentList = snapshot.docs.map((doc) {
+        return {
+          'name': doc['name'] as String,
+          'email': doc['email'] as String, // Assuming email is stored in Firestore
+        };
+      }).toList();
 
       setState(() {
         _students = studentList;
@@ -159,20 +164,34 @@ class _AddStudentMarksPageState extends State<AddStudentMarksPage> {
               child: ListView.builder(
                 itemCount: _students.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_students[index]),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddMarksPage(
-                            // studentName: _students[index],
-                            className: _selectedClass!,
-                            sectionName: _selectedSection!,
-                          ),
+                  return Card(
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: ListTile(
+                      leading: const Icon(Icons.person, color: Colors.blue),
+                      title: Text(
+                        _students[index]['name']!,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
                         ),
-                      );
-                    },
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                      onTap: () {
+                        // Pass student email to AddMarksPage
+                        String studentEmail = _students[index]['email']!;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddMarksPage(
+                              studentEmail: studentEmail, // Pass student email
+                              className: _selectedClass!,
+                              sectionName: _selectedSection!,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   );
                 },
               ),

@@ -2,13 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AddMarksPage extends StatefulWidget {
+  final String studentEmail;
   final String className;
   final String sectionName;
 
   const AddMarksPage({
+    Key? key,
+    required this.studentEmail,
     required this.className,
     required this.sectionName,
-    Key? key,
   }) : super(key: key);
 
   @override
@@ -17,30 +19,22 @@ class AddMarksPage extends StatefulWidget {
 
 class _AddMarksPageState extends State<AddMarksPage> {
   String? _selectedExam;
-  String? _selectedStudent;
-  List<Map<String, dynamic>> _exams = [];
-  List<Map<String, dynamic>> _students = [];
+  List<String> _exams = [];
   final TextEditingController _marksController = TextEditingController();
-
-  bool _isLoading = false;
+  bool _isLoadingExams = false;
 
   @override
   void initState() {
     super.initState();
-    print('Started Fetching');
     _fetchExams();
-    print('Fetched Exams');
-    _fetchStudents(); // Fetch students from the 'users' collection
-    print('Fetched Students');
   }
 
   Future<void> _fetchExams() async {
     setState(() {
-      _isLoading = true;
+      _isLoadingExams = true;
     });
 
     try {
-      // Fetch exams for the selected class and section
       DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
           .instance
           .collection('exams')
@@ -48,68 +42,23 @@ class _AddMarksPageState extends State<AddMarksPage> {
           .get();
 
       if (snapshot.exists) {
-        List<Map<String, dynamic>> examList =
-            List<Map<String, dynamic>>.from(snapshot.data()?['exams'] ?? []);
+        List<dynamic> examList = snapshot.data()?['exams'] ?? [];
         setState(() {
-          _exams = examList;
+          _exams = examList.map<String>((exam) {
+            return '${exam['examName']} - ${exam['subject']}';
+          }).toList();
         });
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            "Error fetching exams: $e",
-            style: const TextStyle(color: Colors.black),
-          ),
+          content: Text("Error fetching exams: $e"),
           backgroundColor: Colors.red[200],
         ),
       );
     } finally {
       setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _fetchStudents() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Fetch students from 'users' collection where role == 'student'
-      print('${widget.sectionName} and ${widget.className}');
-      QuerySnapshot<Map<String, dynamic>> querySnapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .where('role', isEqualTo: 'student')
-              .where('class', isEqualTo: widget.className) // Class filter
-              .where('section', isEqualTo: widget.sectionName) // Section filter
-              .get();
-
-      List<Map<String, dynamic>> studentList = querySnapshot.docs.map((doc) {
-        return {
-          'studentName': doc.data()['name'],
-          'studentId': doc.id,
-        };
-      }).toList();
-
-      setState(() {
-        _students = studentList;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Error fetching students: $e",
-            style: const TextStyle(color: Colors.black),
-          ),
-          backgroundColor: Colors.red[200],
-        ),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
+        _isLoadingExams = false;
       });
     }
   }
@@ -118,65 +67,51 @@ class _AddMarksPageState extends State<AddMarksPage> {
     String marksText = _marksController.text.trim();
     int? marks = int.tryParse(marksText);
 
-    if (_selectedStudent == null || _selectedExam == null || marks == null) {
+    if (_selectedExam == null || marks == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            "Please select a student, exam, and enter valid marks",
-            style: TextStyle(color: Colors.black),
-          ),
+          content: const Text("Please select an exam and enter marks"),
           backgroundColor: Colors.red[200],
         ),
       );
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
-
     try {
-      // Adding marks to the 'marks' collection
-      await FirebaseFirestore.instance
-          .collection('marks')
-          .doc(_selectedStudent) // Document ID as student ID
-          .set({
-        'studentName': _selectedStudent,
-        'class': widget.className,
-        'section': widget.sectionName,
-        'exam': _selectedExam,
-        'marks': marks,
-      });
+      // Add marks to Firestore
+      final examName = _selectedExam!.split(' - ')[0]; // Get the exam name from the selected exam
+      final subjectName = _selectedExam!.split(' - ')[1]; // Get the subject name
+
+      DocumentReference<Map<String, dynamic>> marksDoc = FirebaseFirestore
+          .instance
+          .collection('studentMarks')
+          .doc(widget.studentEmail);
+
+      await marksDoc.set({
+        examName: {
+          'subject': subjectName,
+          'marks': marks,
+        },
+      }, SetOptions(merge: true)); // Use merge to avoid overwriting existing data
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            "Marks added successfully!",
-            style: TextStyle(color: Colors.black),
-          ),
-          backgroundColor: Colors.green[200],
+          content: const Text("Marks added successfully!"),
+          backgroundColor: Colors.green[400],
         ),
       );
 
       _marksController.clear();
       setState(() {
-        _selectedExam = null;
-        _selectedStudent = null;
+        _selectedExam = null; // Reset exam selection
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            "Error: $e",
-            style: const TextStyle(color: Colors.black),
-          ),
+          content: Text("Error adding marks: $e"),
           backgroundColor: Colors.red[200],
         ),
       );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -184,34 +119,12 @@ class _AddMarksPageState extends State<AddMarksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Marks"),
+        title: Text("Add Marks for ${widget.studentEmail}"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Student Dropdown
-            DropdownButtonFormField<String>(
-              value: _selectedStudent,
-              decoration: const InputDecoration(
-                labelText: "Select Student",
-                border: OutlineInputBorder(),
-              ),
-              items: _students.map((student) {
-                return DropdownMenuItem<String>(
-                  value: student['studentName'],
-                  child: Text(student['studentName']),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedStudent = value;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-
-            // Exam Dropdown
             DropdownButtonFormField<String>(
               value: _selectedExam,
               decoration: const InputDecoration(
@@ -219,10 +132,9 @@ class _AddMarksPageState extends State<AddMarksPage> {
                 border: OutlineInputBorder(),
               ),
               items: _exams.map((exam) {
-                return DropdownMenuItem<String>(
-                  value:
-                      exam['examName'], // Assuming each exam has an 'examName'
-                  child: Text(exam['examName']),
+                return DropdownMenuItem(
+                  value: exam,
+                  child: Text(exam),
                 );
               }).toList(),
               onChanged: (value) {
@@ -231,9 +143,7 @@ class _AddMarksPageState extends State<AddMarksPage> {
                 });
               },
             ),
-            const SizedBox(height: 16.0),
-
-            // Marks Input Field
+            const SizedBox(height: 16),
             TextField(
               controller: _marksController,
               keyboardType: TextInputType.number,
@@ -242,22 +152,13 @@ class _AddMarksPageState extends State<AddMarksPage> {
                 border: OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: 16.0),
-
-            // Submit Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _addMarks,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  textStyle: const TextStyle(fontSize: 18.0),
-                ),
-                child: _isLoading
-                    ? const CircularProgressIndicator()
-                    : const Text("Add Marks"),
-              ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _addMarks,
+              child: const Text("Add Marks"),
             ),
+            const SizedBox(height: 16),
+            if (_isLoadingExams) const CircularProgressIndicator(),
           ],
         ),
       ),
