@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class DisplayStudentProgress extends StatefulWidget {
-  final String studentName;
+  final String studentEmail;  // Changed to email to fetch marks
   final String className;
   final String sectionName;
 
   const DisplayStudentProgress({
-    required this.studentName,
+    required this.studentEmail,
     required this.className,
     required this.sectionName,
     Key? key,
@@ -72,10 +72,10 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
     });
 
     try {
-      // Fetch marks for the selected student and subject
+      // Fetch marks for the selected student and subject using studentEmail
       QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
           .collection('marks')
-          .where('studentName', isEqualTo: widget.studentName)
+          .where('studentEmail', isEqualTo: widget.studentEmail) // Use studentEmail instead of studentName
           .where('subject', isEqualTo: _selectedSubject)
           .get();
 
@@ -111,7 +111,7 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Progress of ${widget.studentName}"),
+        title: Text("Progress of ${widget.studentEmail}"), // Display email instead of name
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
