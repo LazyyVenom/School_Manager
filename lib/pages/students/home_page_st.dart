@@ -191,12 +191,36 @@ class HomePage extends StatelessWidget {
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child:
-                                      Text("Check Your Child's Progress Here"),
+                                      Text("Progress"),
                                 ),
                                 Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: Icon(
                                     Icons.bar_chart,
+                                    size: 70,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {},
+                          child: Card(
+                            color: Colors.deepPurple[50],
+                            child: const Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child:
+                                      Text("Leave Application"),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Icon(
+                                    Icons.leave_bags_at_home,
                                     size: 70,
                                   ),
                                 )
