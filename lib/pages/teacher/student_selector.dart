@@ -54,12 +54,12 @@ class _AddStudentMarksPageState extends State<AddStudentMarksPage> {
   Future<void> _fetchStudents() async {
     if (_selectedClass == null || _selectedSection == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
+        SnackBar(
+          content: const Text(
             "Please select class and section",
             style: TextStyle(color: Colors.black),
           ),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.red[200],
         ),
       );
       return;
@@ -72,7 +72,8 @@ class _AddStudentMarksPageState extends State<AddStudentMarksPage> {
     try {
       QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
           .instance
-          .collection('students')
+          .collection('users')
+          .where('role', isEqualTo: 'student')
           .where('class', isEqualTo: _selectedClass)
           .where('section', isEqualTo: _selectedSection)
           .get();

@@ -27,8 +27,11 @@ class _AddMarksPageState extends State<AddMarksPage> {
   @override
   void initState() {
     super.initState();
+    print('Started Fetching');
     _fetchExams();
+    print('Fetched Exams');
     _fetchStudents(); // Fetch students from the 'users' collection
+    print('Fetched Students');
   }
 
   Future<void> _fetchExams() async {
@@ -75,6 +78,7 @@ class _AddMarksPageState extends State<AddMarksPage> {
 
     try {
       // Fetch students from 'users' collection where role == 'student'
+      print('${widget.sectionName} and ${widget.className}');
       QuerySnapshot<Map<String, dynamic>> querySnapshot =
           await FirebaseFirestore.instance
               .collection('users')
