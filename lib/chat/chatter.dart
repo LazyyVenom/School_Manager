@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chat_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key, required this.type, required this.email});
@@ -29,7 +30,9 @@ class _ChatPageState extends State<ChatPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Messaging ${widget.type}"),
+        title: Text("Chat with ${widget.type}"),
+        backgroundColor: Colors.deepPurple,
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -44,70 +47,110 @@ class _ChatPageState extends State<ChatPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                // Get the list of messages from Firestore
                 var messages = snapshot.data!.docs;
 
                 return ListView.builder(
                   itemCount: messages.length,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   itemBuilder: (context, index) {
                     var messageData = messages[index].data() as Map<String, dynamic>;
                     var isCurrentUser = messageData['senderEmail'] == currentUser.gmail;
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 16.0),
-                      child: Align(
-                        alignment: isCurrentUser
-                            ? Alignment.centerRight
-                            : Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            color: isCurrentUser
-                                ? Colors.deepPurple[100]
-                                : Colors.grey[300],
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Text(messageData['message']),
-                        ),
-                      ),
+                    return _buildMessageBubble(
+                      messageData['message'],
+                      isCurrentUser,
+                      messageData['timestamp']?.toDate(),
                     );
                   },
                 );
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: "Type a message",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.send,
-                    color: Colors.deepPurple,
-                  ),
-                  onPressed: () async {
-                    if (_controller.text.isNotEmpty) {
-                      // Send the message using ChatService
-                      await _chatService.sendMessage(
-                        currentUser.gmail!, // Sender
-                        widget.email,       // Receiver
-                        _controller.text,   // Message
-                      );
-                      _controller.clear(); // Clear the text field
-                    }
-                  },
+          _buildMessageInput(currentUser),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(String message, bool isCurrentUser, DateTime? timestamp) {
+    return Align(
+      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: isCurrentUser ? Colors.deepPurple[100] : Colors.grey[300],
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(isCurrentUser ? 12 : 0),
+              topRight: Radius.circular(isCurrentUser ? 0 : 12),
+              bottomLeft: const Radius.circular(12),
+              bottomRight: const Radius.circular(12),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 5,
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                message,
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
+              ),
+              if (timestamp != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  DateFormat('hh:mm a').format(timestamp),
+                  style: const TextStyle(fontSize: 10, color: Colors.black54),
                 ),
               ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMessageInput(CurrentUser currentUser) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: "Type a message...",
+                filled: true,
+                fillColor: Colors.grey[100],
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          CircleAvatar(
+            backgroundColor: Colors.deepPurple,
+            child: IconButton(
+              icon: const Icon(Icons.send, color: Colors.white),
+              onPressed: () async {
+                if (_controller.text.isNotEmpty) {
+                  await _chatService.sendMessage(
+                    currentUser.gmail!, // Sender
+                    widget.email,       // Receiver
+                    _controller.text,   // Message
+                  );
+                  _controller.clear(); // Clear the text field
+                }
+              },
             ),
           ),
         ],

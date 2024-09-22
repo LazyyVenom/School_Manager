@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
+import 'package:school_manager/pages/students/leave_requets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -59,7 +60,7 @@ class HomePage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 "Welcome, ${user.name}",
@@ -126,7 +127,7 @@ class HomePage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Recent Activities",
+          "Perform Tasks",
           style: Theme.of(context).textTheme.headline6?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.deepPurple,
@@ -181,7 +182,7 @@ class HomePage extends StatelessWidget {
                 title: "Check Progress",
                 icon: Icons.bar_chart,
                 onTap: () {
-                  // Functionality for Progress
+                  
                 },
               ),
               _buildActivityCard(
@@ -189,7 +190,12 @@ class HomePage extends StatelessWidget {
                 title: "Leave Application",
                 icon: Icons.leave_bags_at_home,
                 onTap: () {
-                  // Functionality for Leave Application
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LeaveApplicationPage(),
+                    ),
+                  );
                 },
               ),
             ],
