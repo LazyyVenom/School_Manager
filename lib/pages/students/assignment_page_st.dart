@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart'; // Import CurrentUser model
+import 'package:school_manager/assignment_service.dart'; // Import your AssignmentService
 
 class AssignmentPage extends StatefulWidget {
   const AssignmentPage({super.key});
@@ -10,9 +14,19 @@ class AssignmentPage extends StatefulWidget {
 class _AssignmentPageState extends State<AssignmentPage> {
   final List<String> categories = ['All', 'Assignments', 'Homework'];
   String selectedCategory = 'All';
+  late AssignmentService assignmentService;
+
+  @override
+  void initState() {
+    super.initState();
+    assignmentService = AssignmentService(); // Initialize assignment service
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Get current user information from Provider
+    final currentUser = Provider.of<CurrentUser>(context, listen: false);
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -54,27 +68,57 @@ class _AssignmentPageState extends State<AssignmentPage> {
           const Divider(),
           const SizedBox(height: 6),
           Expanded(
-            child: ListView.builder(
-              itemCount: 9,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(1),
-                    color: Colors.deepPurple[50],
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.bookmark,
-                        color: Colors.deepPurple[300],
-                      ),
-                      title: Text("Homework for Grade $index"),
-                      subtitle: Text("Sent On: Regarding Office Work for $index"),
-                      trailing: Icon(
-                        Icons.arrow_circle_right,
-                        color: Colors.deepPurple[300],
-                      ),
-                    ),
-                  ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: assignmentService.getAssignments(
+                currentUser.className!,
+                currentUser.section!,
+              ), // Get assignments for the user's class and section
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No assignments found'));
+                }
+
+                final assignments = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: assignments.length,
+                  itemBuilder: (context, index) {
+                    var assignment = assignments[index];
+                    // Filter based on the selected category
+                    if (selectedCategory == 'All' ||
+                        assignment['type'] == selectedCategory) {
+                      return Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Container(
+                          padding: const EdgeInsets.all(1),
+                          color: Colors.deepPurple[50],
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.bookmark,
+                              color: Colors.deepPurple[300],
+                            ),
+                            title: Text(assignment['assignment'] ?? 'No Title'),
+                            subtitle: Text(
+                              "Due Date: ${assignment['dueDate']?.toDate().toLocal()}",
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_circle_right,
+                              color: Colors.deepPurple[300],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink(); // If not in selected category, return an empty widget
+                  },
                 );
               },
             ),
