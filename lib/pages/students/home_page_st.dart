@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:school_manager/pages/students/leave_requets.dart';
-import 'package:school_manager/pages/teacher/show_progress.dart';
+import 'package:school_manager/pages/students/show_progress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 

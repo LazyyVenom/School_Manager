@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:school_manager/pages/teacher/show_progress.dart';
+import 'package:school_manager/pages/students/show_progress.dart';
 
 class StudentListPage extends StatefulWidget {
   @override
