@@ -37,8 +37,8 @@ class HomePageTh extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 0,
+            SizedBox(
+              width: double.infinity,
               child: Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(

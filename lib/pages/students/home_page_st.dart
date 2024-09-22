@@ -48,30 +48,33 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildWelcomeCard(BuildContext context, CurrentUser user) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      color: Colors.deepPurple[50],
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Welcome, ${user.name}",
-              style: Theme.of(context).textTheme.headline5?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Class ${user.className} - Section ${user.section}",
-              style: Theme.of(context).textTheme.subtitle1,
-            ),
-          ],
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: Colors.deepPurple[50],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Welcome, ${user.name}",
+                style: Theme.of(context).textTheme.headline5?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "Class ${user.className} - Section ${user.section}",
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+            ],
+          ),
         ),
       ),
     );
