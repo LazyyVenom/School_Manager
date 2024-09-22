@@ -42,7 +42,7 @@ class _ChatsDisplayState extends State<ChatsDisplay> {
   Widget _buildUserListItem(DocumentSnapshot document, CurrentUser currentUser) {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
-    if ((currentUser.gmail != data['email']) & (widget.type.toLowerCase().contains(data['role']))) {
+    if ((currentUser.gmail != data['email']) & (widget.type.toLowerCase().contains(data['role'])) & (data['class'] == currentUser.className) & (data['section'] == currentUser.section)) {
       return Card(
         margin: const EdgeInsets.symmetric(vertical: 5),
         elevation: 2,
