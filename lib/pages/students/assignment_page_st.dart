@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/assignment_service.dart';
@@ -132,7 +133,7 @@ class _AssignmentPageState extends State<AssignmentPage> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  "Due Date: ${assignment['dueDate']?.toDate().toLocal()}",
+                                  "Due Date: ${DateFormat('yyyy-MM-dd').format(assignment['dueDate']!.toDate())}",
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                   ),

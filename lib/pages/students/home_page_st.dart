@@ -1,4 +1,4 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
@@ -18,219 +18,214 @@ void _navigateToLoginPage(BuildContext context) {
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => const LoginPage()),
-    (Route<dynamic> route) => false, // This removes all the previous routes
+    (Route<dynamic> route) => false,
   );
 }
-
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    CurrentUser _current_user = Provider.of<CurrentUser>(context,listen: false);
+    final _current_user = Provider.of<CurrentUser>(context, listen: false);
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(
-              height: 95,
-              width: double.infinity,
-              child: Card(
-                color: Colors.deepPurple[50],
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Welcome ${_current_user.name}",
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                      ),
-                      Text(
-                        "Class ${_current_user.className} Std ${_current_user.section}",
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.deepPurple[50]),
-                    ),
-                    onPressed: () {
-                      return;
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Change Password"),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(Colors.red[50]),
-                      foregroundColor:
-                          MaterialStatePropertyAll(Colors.red[400]),
-                      overlayColor: MaterialStatePropertyAll(Colors.red[100]),
-                    ),
-                    onPressed: () {
-                      logout(context);
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Log Out"),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            const Divider(),
-            const SizedBox(height: 6),
+            _buildWelcomeCard(context, _current_user),
+            const SizedBox(height: 16),
+            _buildActionButtons(context),
+            const SizedBox(height: 16),
+            const SizedBox(height: 16),
+            _buildRecentActivitiesHeader(context),
+            const SizedBox(height: 16),
+            _buildActivityCards(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeCard(BuildContext context, CurrentUser user) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      color: Colors.deepPurple[50],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Text(
-              "Recent Activities",
-              style: Theme.of(context).textTheme.headlineSmall,
+              "Welcome, ${user.name}",
+              style: Theme.of(context).textTheme.headline5?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
             ),
-            const SizedBox(height: 6),
-            const Divider(),
-            const SizedBox(height: 6),
-            Expanded(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context, MaterialPageRoute(
-                                builder: (context) => const ChatsDisplay(type: "Teachers")
-                                )
-                              );
-                          },
-                          child: Card(
-                              color: Colors.deepPurple[50],
-                              child: const Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Text("Contact Teacher"),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 55,
-                                    ),
-                                  )
-                                ],
-                              )),
-                        ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                              context, MaterialPageRoute(
-                                builder: (context) => const ChatsDisplay(type: 'Management')
-                                )
-                              );
-                          },
-                          child: Card(
-                            color: Colors.deepPurple[50],
-                            child: const Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text("Contact Management"),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 8),
-                                  child: Icon(
-                                    Icons.manage_accounts,
-                                    size: 55,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {},
-                          child: Card(
-                            color: Colors.deepPurple[50],
-                            child: const Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child:
-                                      Text("Progress"),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.bar_chart,
-                                    size: 70,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {},
-                          child: Card(
-                            color: Colors.deepPurple[50],
-                            child: const Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child:
-                                      Text("Leave Application"),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.leave_bags_at_home,
-                                    size: 70,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
+            const SizedBox(height: 8),
+            Text(
+              "Class ${user.className} - Section ${user.section}",
+              style: Theme.of(context).textTheme.subtitle1,
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.deepPurple[50],
+              onPrimary: Colors.deepPurple,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              // Functionality to change password
+            },
+            child: const Text("Change Password"),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red[50],
+              onPrimary: Colors.red[400],
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () {
+              logout(context);
+            },
+            child: const Text("Log Out"),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentActivitiesHeader(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Recent Activities",
+          style: Theme.of(context).textTheme.headline6?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
+              ),
+        ),
+        const Divider(),
+      ],
+    );
+  }
+
+  Widget _buildActivityCards(BuildContext context) {
+    return Expanded(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildActivityCard(
+                context,
+                title: "Contact Teacher",
+                icon: Icons.person,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChatsDisplay(type: "Teachers"),
+                    ),
+                  );
+                },
+              ),
+              _buildActivityCard(
+                context,
+                title: "Contact Management",
+                icon: Icons.manage_accounts,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChatsDisplay(type: 'Management'),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildActivityCard(
+                context,
+                title: "Check Progress",
+                icon: Icons.bar_chart,
+                onTap: () {
+                  // Functionality for Progress
+                },
+              ),
+              _buildActivityCard(
+                context,
+                title: "Leave Application",
+                icon: Icons.leave_bags_at_home,
+                onTap: () {
+                  // Functionality for Leave Application
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityCard(BuildContext context, {
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: Colors.deepPurple[50],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 55, color: Colors.deepPurple[300]),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.subtitle1?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );
