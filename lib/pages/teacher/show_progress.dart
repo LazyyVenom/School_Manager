@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 class DisplayStudentProgress extends StatefulWidget {
-  final String studentEmail;  // Changed to email to fetch marks
+  final String studentEmail;
   final String className;
   final String sectionName;
 
@@ -19,40 +19,40 @@ class DisplayStudentProgress extends StatefulWidget {
 }
 
 class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
-  String? _selectedSubject;
-  List<String> _subjects = [];
-  List<Map<String, dynamic>> _marksData = [];
+  String? _selectedExam;
+  List<String> _exams = [];
+  Map<String, double> _marksData = {};
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchSubjects();
+    _fetchExams();
   }
 
-  Future<void> _fetchSubjects() async {
+  Future<void> _fetchExams() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      // Fetch subjects for the class from Firestore
       DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
           .instance
-          .collection('classes')
+          .collection('exams')
           .doc('${widget.className}_${widget.sectionName}')
           .get();
 
       if (snapshot.exists) {
-        List<String> subjectList = List<String>.from(snapshot.data()?['subjects'] ?? []);
+        List<String> examList = List<String>.from(
+            snapshot.data()?['exams']?.map((e) => e['examName']) ?? []);
         setState(() {
-          _subjects = subjectList;
+          _exams = examList;
         });
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error fetching subjects: $e"),
+          content: Text("Error fetching exams: $e"),
           backgroundColor: Colors.red[200],
         ),
       );
@@ -64,133 +64,123 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
   }
 
   Future<void> _fetchMarks() async {
-    if (_selectedSubject == null) return;
+  if (_selectedExam == null) return;
 
-    setState(() {
-      _isLoading = true;
-      _marksData.clear();
-    });
+  setState(() {
+    _isLoading = true;
+    _marksData.clear();
+  });
 
-    try {
-      // Fetch marks for the selected student and subject using studentEmail
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
-          .collection('marks')
-          .where('studentEmail', isEqualTo: widget.studentEmail) // Use studentEmail instead of studentName
-          .where('subject', isEqualTo: _selectedSubject)
-          .get();
+  try {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot =
+        await FirebaseFirestore.instance
+            .collection('studentMarks')
+            .where(FieldPath.documentId, isEqualTo: widget.studentEmail)
+            .get();
 
-      List<Map<String, dynamic>> marksList = querySnapshot.docs.map((doc) {
-        return {
-          'examName': doc.data()['exam'],
-          'marks': doc.data()['marks'],
-          'date': (doc.data()['date'] as Timestamp).toDate(),
-        };
-      }).toList();
+    if (querySnapshot.docs.isNotEmpty) {
+      var examDetails =
+          querySnapshot.docs.first.data()['exams'] as List<dynamic>? ?? [];
+      var selectedExam = examDetails.firstWhere(
+          (exam) => exam['examName'] == _selectedExam,
+          orElse: () => null);
 
-      // Sort marks by date
-      marksList.sort((a, b) => a['date'].compareTo(b['date']));
+      if (selectedExam != null) {
+        // Convert marks safely using as
+        var marks = selectedExam['marks'] as Map<String, dynamic>;
 
-      setState(() {
-        _marksData = marksList;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error fetching marks: $e"),
-          backgroundColor: Colors.red[200],
-        ),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+        _marksData = marks.map<String, double>((key, value) {
+          return MapEntry(key, (value is num) ? value.toDouble() : 0.0);
+        });
+      }
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Error fetching marks: $e"),
+        backgroundColor: Colors.red[200],
+      ),
+    );
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Progress of ${widget.studentEmail}"), // Display email instead of name
+        title: Text("Progress of ${widget.studentEmail}"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             DropdownButtonFormField<String>(
-              value: _selectedSubject,
+              value: _selectedExam,
               decoration: const InputDecoration(
-                labelText: "Select Subject",
+                labelText: "Select Exam",
                 border: OutlineInputBorder(),
               ),
-              items: _subjects.map((subject) {
+              items: _exams.map((exam) {
                 return DropdownMenuItem<String>(
-                  value: subject,
-                  child: Text(subject),
+                  value: exam,
+                  child: Text(exam),
                 );
               }).toList(),
               onChanged: (value) {
                 setState(() {
-                  _selectedSubject = value;
-                  _fetchMarks(); // Fetch marks for the selected subject
+                  _selectedExam = value;
+                  _fetchMarks();
                 });
               },
             ),
             const SizedBox(height: 16.0),
-
-            // Show a loading spinner when data is being fetched
+            _selectedExam != null
+                ? ElevatedButton(
+                    onPressed: _fetchMarks,
+                    child: const Text("Fetch Marks"),
+                  )
+                : Container(),
+            const SizedBox(height: 16.0),
             _isLoading
                 ? const CircularProgressIndicator()
                 : _marksData.isEmpty
-                    ? const Text("No marks available for the selected subject.")
-                    : Expanded(child: _buildLineChart()),
+                    ? const Text("No marks available for the selected exam.")
+                    : Expanded(child: _buildBarChart()),
           ],
         ),
       ),
     );
   }
 
-  // Function to build the Line Chart
-  Widget _buildLineChart() {
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(show: true),
+  // Function to build the Bar Chart
+  Widget _buildBarChart() {
+    return BarChart(
+      BarChartData(
+        barGroups: _marksData.entries.map((entry) {
+          return BarChartGroupData(
+            x: _marksData.keys.toList().indexOf(entry.key),
+            barRods: [
+              BarChartRodData(
+                y: entry.value,
+              ),
+            ],
+          );
+        }).toList(),
         titlesData: FlTitlesData(
+          leftTitles: SideTitles(showTitles: true),
           bottomTitles: SideTitles(
             showTitles: true,
             getTitles: (value) {
-              final int index = value.toInt();
-              if (index >= 0 && index < _marksData.length) {
-                final examDate = _marksData[index]['date'] as DateTime;
-                return "${examDate.day}/${examDate.month}";
-              }
-              return '';
-            },
-          ),
-          leftTitles: SideTitles(
-            showTitles: true,
-            getTitles: (value) {
-              return value.toString();
+              return _marksData.keys.toList()[value.toInt()];
             },
           ),
         ),
         borderData: FlBorderData(show: true),
-        minX: 0,
-        maxX: (_marksData.length - 1).toDouble(),
-        minY: 0,
-        maxY: 100, // Assuming max marks is 100
-        lineBarsData: [
-          LineChartBarData(
-            spots: _marksData
-                .asMap()
-                .entries
-                .map((entry) => FlSpot(entry.key.toDouble(), entry.value['marks'].toDouble()))
-                .toList(),
-            isCurved: true,
-            dotData: FlDotData(show: true),
-            belowBarData: BarAreaData(show: true),
-          ),
-        ],
       ),
     );
   }

@@ -19,9 +19,12 @@ class AddMarksPage extends StatefulWidget {
 
 class _AddMarksPageState extends State<AddMarksPage> {
   String? _selectedExam;
+  String? _selectedSubject;
   List<String> _exams = [];
+  List<String> _subjects = [];
   final TextEditingController _marksController = TextEditingController();
   bool _isLoadingExams = false;
+  bool _isLoadingSubjects = false;
 
   @override
   void initState() {
@@ -29,12 +32,14 @@ class _AddMarksPageState extends State<AddMarksPage> {
     _fetchExams();
   }
 
+  /// Fetch exams from Firestore based on class and section
   Future<void> _fetchExams() async {
     setState(() {
       _isLoadingExams = true;
     });
 
     try {
+      // Fetch exam data from the 'exams' collection for the specified class and section
       DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
           .instance
           .collection('exams')
@@ -44,8 +49,9 @@ class _AddMarksPageState extends State<AddMarksPage> {
       if (snapshot.exists) {
         List<dynamic> examList = snapshot.data()?['exams'] ?? [];
         setState(() {
+          // Get the exam names
           _exams = examList.map<String>((exam) {
-            return '${exam['examName']} - ${exam['subject']}';
+            return exam['examName']; // Only show exam names
           }).toList();
         });
       }
@@ -63,14 +69,53 @@ class _AddMarksPageState extends State<AddMarksPage> {
     }
   }
 
+  /// Fetch subjects for the selected exam
+  Future<void> _fetchSubjects() async {
+    if (_selectedExam == null) return;
+
+    setState(() {
+      _isLoadingSubjects = true;
+    });
+
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('exams')
+          .doc('${widget.className}_${widget.sectionName}')
+          .get();
+
+      if (snapshot.exists) {
+        List<dynamic> examData = snapshot.data()?['exams'] ?? [];
+        var selectedExam = examData.firstWhere((exam) => exam['examName'] == _selectedExam);
+
+        // Get subjects for the selected exam
+        setState(() {
+          _subjects = [selectedExam['subject']]; // Assuming one subject per exam entry
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error fetching subjects: $e"),
+          backgroundColor: Colors.red[200],
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoadingSubjects = false;
+      });
+    }
+  }
+
+  /// Add marks to the 'studentMarks' collection
   Future<void> _addMarks() async {
     String marksText = _marksController.text.trim();
     int? marks = int.tryParse(marksText);
 
-    if (_selectedExam == null || marks == null) {
+    if (_selectedExam == null || _selectedSubject == null || marks == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Please select an exam and enter marks"),
+          content: const Text("Please select an exam, a subject, and enter valid marks"),
           backgroundColor: Colors.red[200],
         ),
       );
@@ -78,21 +123,20 @@ class _AddMarksPageState extends State<AddMarksPage> {
     }
 
     try {
-      // Add marks to Firestore
-      final examName = _selectedExam!.split(' - ')[0]; // Get the exam name from the selected exam
-      final subjectName = _selectedExam!.split(' - ')[1]; // Get the subject name
-
-      DocumentReference<Map<String, dynamic>> marksDoc = FirebaseFirestore
+      DocumentReference<Map<String, dynamic>> studentDoc = FirebaseFirestore
           .instance
           .collection('studentMarks')
           .doc(widget.studentEmail);
 
-      await marksDoc.set({
-        examName: {
-          'subject': subjectName,
-          'marks': marks,
-        },
-      }, SetOptions(merge: true)); // Use merge to avoid overwriting existing data
+      // Add or update the marks for the selected exam and subject
+      await studentDoc.set({
+        'exams': FieldValue.arrayUnion([{
+          'examName': _selectedExam,
+          'marks': {
+            _selectedSubject!: marks // Add or update marks for the specific subject
+          },
+        }]),
+      }, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -103,7 +147,8 @@ class _AddMarksPageState extends State<AddMarksPage> {
 
       _marksController.clear();
       setState(() {
-        _selectedExam = null; // Reset exam selection
+        _selectedExam = null;
+        _selectedSubject = null;
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -140,9 +185,30 @@ class _AddMarksPageState extends State<AddMarksPage> {
               onChanged: (value) {
                 setState(() {
                   _selectedExam = value;
+                  _fetchSubjects(); // Fetch subjects when an exam is selected
                 });
               },
             ),
+            const SizedBox(height: 16),
+            if (_subjects.isNotEmpty) // Only show this if subjects are available
+              DropdownButtonFormField<String>(
+                value: _selectedSubject,
+                decoration: const InputDecoration(
+                  labelText: "Select Subject",
+                  border: OutlineInputBorder(),
+                ),
+                items: _subjects.map((subject) {
+                  return DropdownMenuItem(
+                    value: subject,
+                    child: Text(subject),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedSubject = value;
+                  });
+                },
+              ),
             const SizedBox(height: 16),
             TextField(
               controller: _marksController,
@@ -158,7 +224,7 @@ class _AddMarksPageState extends State<AddMarksPage> {
               child: const Text("Add Marks"),
             ),
             const SizedBox(height: 16),
-            if (_isLoadingExams) const CircularProgressIndicator(),
+            if (_isLoadingExams || _isLoadingSubjects) const CircularProgressIndicator(),
           ],
         ),
       ),

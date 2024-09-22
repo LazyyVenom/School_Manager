@@ -46,10 +46,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            "Error fetching classes and sections: $e",
-            style: const TextStyle(color: Colors.black),
-          ),
+          content: Text("Error fetching classes and sections: $e", style: const TextStyle(color: Colors.black)),
           backgroundColor: Colors.red[200],
         ),
       );
@@ -76,10 +73,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            "Error fetching subjects: $e",
-            style: const TextStyle(color: Colors.black),
-          ),
+          content: Text("Error fetching subjects: $e", style: const TextStyle(color: Colors.black)),
           backgroundColor: Colors.red[200],
         ),
       );
@@ -117,10 +111,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
             const Text(
               "Create New Exam",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20.0),
 
@@ -131,16 +122,14 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
                 labelText: "Select Class",
                 border: OutlineInputBorder(),
               ),
-              items: _classes
-                  .map((className) => DropdownMenuItem(
-                        value: className,
-                        child: Text(className),
-                      ))
-                  .toList(),
+              items: _classes.map((className) => DropdownMenuItem(
+                value: className,
+                child: Text(className),
+              )).toList(),
               onChanged: (value) {
                 setState(() {
                   _selectedClass = value;
-                  _fetchSubjects(); // Fetch subjects when class is selected
+                  _fetchSubjects();
                 });
               },
             ),
@@ -153,16 +142,14 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
                 labelText: "Select Section",
                 border: OutlineInputBorder(),
               ),
-              items: _sections
-                  .map((sectionName) => DropdownMenuItem(
-                        value: sectionName,
-                        child: Text(sectionName),
-                      ))
-                  .toList(),
+              items: _sections.map((sectionName) => DropdownMenuItem(
+                value: sectionName,
+                child: Text(sectionName),
+              )).toList(),
               onChanged: (value) {
                 setState(() {
                   _selectedSection = value;
-                  _fetchSubjects(); // Fetch subjects when section is selected
+                  _fetchSubjects();
                 });
               },
             ),
@@ -175,12 +162,10 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
                 labelText: "Select Subject",
                 border: OutlineInputBorder(),
               ),
-              items: _subjects
-                  .map((subjectName) => DropdownMenuItem(
-                        value: subjectName,
-                        child: Text(subjectName),
-                      ))
-                  .toList(),
+              items: _subjects.map((subjectName) => DropdownMenuItem(
+                value: subjectName,
+                child: Text(subjectName),
+              )).toList(),
               onChanged: (value) {
                 setState(() {
                   _selectedSubject = value;
@@ -200,6 +185,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
             ),
             const SizedBox(height: 16.0),
 
+            // Exam Name Field (removed from internal map)
             TextField(
               controller: _examNameController,
               decoration: const InputDecoration(
@@ -230,8 +216,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
               child: ElevatedButton(
                 onPressed: _isLoading ? null : _createExam,
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   textStyle: const TextStyle(fontSize: 18),
                 ),
                 child: _isLoading
@@ -268,10 +253,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
         _selectedDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            "Please fill all the fields correctly",
-            style: TextStyle(color: Colors.black),
-          ),
+          content: const Text("Please fill all the fields correctly", style: TextStyle(color: Colors.black)),
           backgroundColor: Colors.red[200],
         ),
       );
@@ -284,16 +266,13 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
 
     try {
       final DocumentReference<Map<String, dynamic>> examDoc =
-          FirebaseFirestore.instance
-              .collection('exams')
-              .doc('${_selectedClass}_$_selectedSection');
+          FirebaseFirestore.instance.collection('exams').doc('${_selectedClass}_$_selectedSection');
 
       final DocumentSnapshot<Map<String, dynamic>> snapshot = await examDoc.get();
 
       if (snapshot.exists) {
         final data = snapshot.data();
-        final List<Map<String, dynamic>> exams =
-            List<Map<String, dynamic>>.from(data?['exams'] ?? []);
+        final List<Map<String, dynamic>> exams = List<Map<String, dynamic>>.from(data?[examName] ?? []);
 
         // Check if exam already exists for the subject
         final existingExam = exams.firstWhere(
@@ -303,17 +282,13 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
         if (existingExam.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                "Exam for this subject already exists for the selected class and section.",
-                style: TextStyle(color: Colors.black),
-              ),
+              content: const Text("Exam for this subject already exists for the selected class and section.", style: TextStyle(color: Colors.black)),
               backgroundColor: Colors.red[200],
             ),
           );
         } else {
-          // Add the new exam
+          // Add the new exam without examName in the map
           exams.add({
-            'examName' : examName,
             'subject': _selectedSubject,
             'highestMarks': highestMarks,
             'date': _selectedDate!.toIso8601String(),
@@ -321,27 +296,23 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
 
           // Update Firestore with the new exam list
           await examDoc.update({
-            'exams': exams,
+            examName: exams,
           });
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                "Exam Created Successfully!",
-                style: TextStyle(color: Colors.black),
-              ),
+              content: const Text("Exam Created Successfully!", style: TextStyle(color: Colors.black)),
               backgroundColor: Colors.green[200],
             ),
           );
 
           _highestMarksController.clear();
+          _examNameController.clear();
         }
       } else {
-                // Create a new document if it doesn't exist
         await examDoc.set({
-          'exams': [
+          examName: [
             {
-              'examName' : examName,
               'subject': _selectedSubject,
               'highestMarks': highestMarks,
               'date': _selectedDate!.toIso8601String(),
@@ -351,16 +322,14 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
-              "Exam Registered Successfully!",
-              style: TextStyle(color: Colors.black),
-            ),
+            content: const Text("Exam Registered Successfully!", style: TextStyle(color: Colors.black)),
             backgroundColor: Colors.green[200],
           ),
         );
 
         // Clear the fields
         _highestMarksController.clear();
+        _examNameController.clear();
         _selectedDate = null;
         setState(() {
           _selectedSubject = null;
@@ -369,10 +338,7 @@ class _ExamCreatePageState extends State<ExamCreatePage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            "Error: $e",
-            style: const TextStyle(color: Colors.black),
-          ),
+          content: Text("Error: $e", style: const TextStyle(color: Colors.black)),
           backgroundColor: Colors.red[200],
         ),
       );
