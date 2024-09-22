@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
 import "package:school_manager/pages/teacher/exam_register.dart";
-import "package:school_manager/pages/teacher/progress_student_list.dart";
+import 'package:school_manager/pages/students/progress_student_list.dart';
 import "package:school_manager/pages/teacher/student_selector.dart";
 import "package:school_manager/pages/teacher/subject_register.dart";
 
