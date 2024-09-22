@@ -62,43 +62,39 @@ class HomePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TextButton(
+                Expanded(
+                  child: TextButton(
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.deepPurple[50])),
+                      backgroundColor:
+                          MaterialStatePropertyAll(Colors.deepPurple[50]),
+                    ),
                     onPressed: () {
                       return;
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text("Change Password"),
-                    )),
-                TextButton(
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextButton(
                     style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.deepPurple[50])),
-                    onPressed: () {
-                      return;
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Request Profile Edit"),
-                    )),
-                TextButton(
-                    style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll(Colors.red[50]),
-                        foregroundColor:
-                            MaterialStatePropertyAll(Colors.red[400]),
-                        overlayColor:
-                            MaterialStatePropertyAll(Colors.red[100])),
+                      backgroundColor: MaterialStatePropertyAll(Colors.red[50]),
+                      foregroundColor:
+                          MaterialStatePropertyAll(Colors.red[400]),
+                      overlayColor: MaterialStatePropertyAll(Colors.red[100]),
+                    ),
                     onPressed: () {
                       logout(context);
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: Text("Log Out"),
-                    )),
+                    ),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 6),

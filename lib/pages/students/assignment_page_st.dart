@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:school_manager/additional_features.dart'; // Import CurrentUser model
-import 'package:school_manager/assignment_service.dart'; // Import your AssignmentService
+import 'package:school_manager/additional_features.dart';
+import 'package:school_manager/assignment_service.dart';
+import 'package:school_manager/pages/students/assignment_details.dart'; 
 
 class AssignmentPage extends StatefulWidget {
   const AssignmentPage({super.key});
@@ -92,7 +93,6 @@ class _AssignmentPageState extends State<AssignmentPage> {
                   itemCount: assignments.length,
                   itemBuilder: (context, index) {
                     var assignment = assignments[index];
-                    // Filter based on the selected category
                     if (selectedCategory == 'All' ||
                         assignment['type'] == selectedCategory) {
                       return Padding(
@@ -113,6 +113,17 @@ class _AssignmentPageState extends State<AssignmentPage> {
                               Icons.arrow_circle_right,
                               color: Colors.deepPurple[300],
                             ),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AssignmentDetailPage(
+                                    assignmentData: assignment.data()
+                                        as Map<String, dynamic>, // Pass the assignment data
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       );

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
-import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/assignment_service.dart';
 
 class AddAssignmentPage extends StatefulWidget {
@@ -65,7 +63,6 @@ class _AddAssignmentPageState extends State<AddAssignmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = Provider.of<CurrentUser>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Assignment'),
@@ -179,8 +176,8 @@ class _AddAssignmentPageState extends State<AddAssignmentPage> {
                       selectedDate != null) {
                     // Call your assignment service to add the assignment
                     assignmentService.addAssignment(
-                      currentUser.className!,
-                      currentUser.section!,
+                      selectedClass!,
+                      selectedSection!,
                       assignmentTitleController.text,
                       assignmentDetailController.text,
                       selectedType,

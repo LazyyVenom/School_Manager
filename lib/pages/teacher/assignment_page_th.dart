@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart'; // Ensure this imports CurrentUser
 import 'package:school_manager/assignment_service.dart';
+import 'package:school_manager/pages/students/assignment_details.dart';
 import 'package:school_manager/pages/teacher/assignment_helper_page.dart';
 
 class AssignmentPageTh extends StatefulWidget {
@@ -115,6 +116,17 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
                                   Icons.arrow_circle_right,
                                   color: Colors.deepPurple[300],
                                 ),
+                                onTap: () {
+                                  // Navigate to the assignment detail page
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AssignmentDetailPage(
+                                        assignmentData: assignment.data() as Map<String, dynamic>,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           );
@@ -127,6 +139,7 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
               ),
             ],
           ),
+          // Floating action button to add a new assignment
           Positioned(
             bottom: 16,
             right: 16,
