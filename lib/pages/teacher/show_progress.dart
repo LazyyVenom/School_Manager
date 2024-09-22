@@ -43,8 +43,12 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
           .get();
 
       if (snapshot.exists) {
-        List<String> examList = List<String>.from(
-            snapshot.data()?['exams']?.map((e) => e['examName']) ?? []);
+        // Get exam names directly from the keys
+        List<String> examList = snapshot
+            .data()!
+            .keys
+            .where((key) => key != 'className' && key != 'sectionName')
+            .toList();
         setState(() {
           _exams = examList;
         });
@@ -64,50 +68,47 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
   }
 
   Future<void> _fetchMarks() async {
-  if (_selectedExam == null) return;
+    if (_selectedExam == null) return;
 
-  setState(() {
-    _isLoading = true;
-    _marksData.clear();
-  });
-
-  try {
-    QuerySnapshot<Map<String, dynamic>> querySnapshot =
-        await FirebaseFirestore.instance
-            .collection('studentMarks')
-            .where(FieldPath.documentId, isEqualTo: widget.studentEmail)
-            .get();
-
-    if (querySnapshot.docs.isNotEmpty) {
-      var examDetails =
-          querySnapshot.docs.first.data()['exams'] as List<dynamic>? ?? [];
-      var selectedExam = examDetails.firstWhere(
-          (exam) => exam['examName'] == _selectedExam,
-          orElse: () => null);
-
-      if (selectedExam != null) {
-        // Convert marks safely using as
-        var marks = selectedExam['marks'] as Map<String, dynamic>;
-
-        _marksData = marks.map<String, double>((key, value) {
-          return MapEntry(key, (value is num) ? value.toDouble() : 0.0);
-        });
-      }
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("Error fetching marks: $e"),
-        backgroundColor: Colors.red[200],
-      ),
-    );
-  } finally {
     setState(() {
-      _isLoading = false;
+      _isLoading = true;
+      _marksData.clear();
     });
-  }
-}
 
+    try {
+      DocumentSnapshot<Map<String, dynamic>> studentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('studentMarks')
+              .doc(widget.studentEmail)
+              .get();
+
+      if (studentSnapshot.exists) {
+        var examData =
+            studentSnapshot.data()?[_selectedExam] as List<dynamic>? ?? [];
+
+        for (var subjectData in examData) {
+          if (subjectData is Map<String, dynamic> &&
+              subjectData.containsKey('subject') &&
+              subjectData.containsKey('marks')) {
+            _marksData[subjectData['subject']] = (subjectData['marks'] is num)
+                ? (subjectData['marks'] as num).toDouble()
+                : 0.0;
+          }
+        }
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error fetching marks: $e"),
+          backgroundColor: Colors.red[200],
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -139,12 +140,11 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
               },
             ),
             const SizedBox(height: 16.0),
-            _selectedExam != null
-                ? ElevatedButton(
-                    onPressed: _fetchMarks,
-                    child: const Text("Fetch Marks"),
-                  )
-                : Container(),
+            if (_selectedExam != null)
+              ElevatedButton(
+                onPressed: _fetchMarks,
+                child: const Text("Fetch Marks"),
+              ),
             const SizedBox(height: 16.0),
             _isLoading
                 ? const CircularProgressIndicator()
@@ -157,6 +157,7 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
     );
   }
 
+  // Function to build the Bar Chart
   // Function to build the Bar Chart
   Widget _buildBarChart() {
     return BarChart(

@@ -39,7 +39,6 @@ class _AddMarksPageState extends State<AddMarksPage> {
     });
 
     try {
-      // Fetch exam data from the 'exams' collection for the specified class and section
       DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
           .instance
           .collection('exams')
@@ -47,12 +46,10 @@ class _AddMarksPageState extends State<AddMarksPage> {
           .get();
 
       if (snapshot.exists) {
-        List<dynamic> examList = snapshot.data()?['exams'] ?? [];
+        List<String> examList = snapshot.data()!.keys.toList();
+
         setState(() {
-          // Get the exam names
-          _exams = examList.map<String>((exam) {
-            return exam['examName']; // Only show exam names
-          }).toList();
+          _exams = examList; // Show all exam names
         });
       }
     } catch (e) {
@@ -85,13 +82,21 @@ class _AddMarksPageState extends State<AddMarksPage> {
           .get();
 
       if (snapshot.exists) {
-        List<dynamic> examData = snapshot.data()?['exams'] ?? [];
-        var selectedExam = examData.firstWhere((exam) => exam['examName'] == _selectedExam);
+        var selectedExamData = snapshot.data()?[_selectedExam];
 
-        // Get subjects for the selected exam
-        setState(() {
-          _subjects = [selectedExam['subject']]; // Assuming one subject per exam entry
-        });
+        if (selectedExamData != null && selectedExamData is List) {
+          List<String> subjects = [];
+          for (var subjectData in selectedExamData) {
+            if (subjectData is Map<String, dynamic> &&
+                subjectData.containsKey('subject')) {
+              subjects.add(subjectData['subject']);
+            }
+          }
+
+          setState(() {
+            _subjects = subjects;
+          });
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -115,7 +120,8 @@ class _AddMarksPageState extends State<AddMarksPage> {
     if (_selectedExam == null || _selectedSubject == null || marks == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text("Please select an exam, a subject, and enter valid marks"),
+          content: const Text(
+              "Please select an exam, a subject, and enter valid marks"),
           backgroundColor: Colors.red[200],
         ),
       );
@@ -128,14 +134,15 @@ class _AddMarksPageState extends State<AddMarksPage> {
           .collection('studentMarks')
           .doc(widget.studentEmail);
 
+      // Prepare the data structure
+      final examData = {
+        'subject': _selectedSubject,
+        'marks': marks,
+      };
+
       // Add or update the marks for the selected exam and subject
       await studentDoc.set({
-        'exams': FieldValue.arrayUnion([{
-          'examName': _selectedExam,
-          'marks': {
-            _selectedSubject!: marks // Add or update marks for the specific subject
-          },
-        }]),
+        _selectedExam!: FieldValue.arrayUnion([examData]),
       }, SetOptions(merge: true));
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -190,7 +197,7 @@ class _AddMarksPageState extends State<AddMarksPage> {
               },
             ),
             const SizedBox(height: 16),
-            if (_subjects.isNotEmpty) // Only show this if subjects are available
+            if (_subjects.isNotEmpty)
               DropdownButtonFormField<String>(
                 value: _selectedSubject,
                 decoration: const InputDecoration(
@@ -224,7 +231,8 @@ class _AddMarksPageState extends State<AddMarksPage> {
               child: const Text("Add Marks"),
             ),
             const SizedBox(height: 16),
-            if (_isLoadingExams || _isLoadingSubjects) const CircularProgressIndicator(),
+            if (_isLoadingExams || _isLoadingSubjects)
+              const CircularProgressIndicator(),
           ],
         ),
       ),
