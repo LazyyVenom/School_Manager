@@ -1,4 +1,4 @@
-import "package:flutter/material.dart";
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chat_displayer_st.dart';
@@ -33,14 +33,18 @@ class HomePageMt extends StatelessWidget {
 
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 95,
+              height: 75,
               width: double.infinity,
               child: Card(
                 color: Colors.deepPurple[50],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
@@ -48,22 +52,24 @@ class HomePageMt extends StatelessWidget {
                       Flexible(
                         child: Text(
                           "Welcome ${currentUser.name}",
-                          style: Theme.of(context).textTheme.headlineMedium,
-                          overflow: TextOverflow
-                              .ellipsis, // This adds the ellipsis (...) if text overflows
-                          maxLines: 1, // Limits the text to a single line
+                          style: Theme.of(context).textTheme.headline5?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple,
+                              ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                       Text(
                         "Administrator",
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -71,13 +77,13 @@ class HomePageMt extends StatelessWidget {
                   child: TextButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStatePropertyAll(Colors.deepPurple[50]),
+                          MaterialStateProperty.all(Colors.deepPurple[50]),
                     ),
                     onPressed: () {
-                      return;
+                      // Add functionality for changing password
                     },
                     child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(12.0),
                       child: Text("Change Password"),
                     ),
                   ),
@@ -86,32 +92,34 @@ class HomePageMt extends StatelessWidget {
                 Expanded(
                   child: TextButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(Colors.red[50]),
-                      foregroundColor:
-                          MaterialStatePropertyAll(Colors.red[400]),
-                      overlayColor: MaterialStatePropertyAll(Colors.red[100]),
+                      backgroundColor: MaterialStateProperty.all(Colors.red[50]),
+                      foregroundColor: MaterialStateProperty.all(Colors.red[400]),
+                      overlayColor: MaterialStateProperty.all(Colors.red[100]),
                     ),
                     onPressed: () {
                       logout(context);
                     },
                     child: const Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: EdgeInsets.all(12.0),
                       child: Text("Log Out"),
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 16),
             const Divider(),
-            const SizedBox(height: 6),
+            const SizedBox(height: 16),
             Text(
               "Perform Tasks",
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headline6?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             const Divider(),
-            const SizedBox(height: 6),
+            const SizedBox(height: 16),
             Expanded(
               child: Column(
                 children: [
@@ -122,42 +130,54 @@ class HomePageMt extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ChatsDisplay(type: "Teachers")));
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ChatsDisplay(type: "Teachers")),
+                            );
                           },
                           child: Card(
-                              color: Colors.deepPurple[50],
-                              child: const Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Text("Contact Teachers"),
+                            color: Colors.deepPurple[50],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text("Contact Teachers"),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 55,
+                                    color: Colors.deepPurple,
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 55,
-                                    ),
-                                  )
-                                ],
-                              )),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                       Expanded(
                         child: InkWell(
                           onTap: () {
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ChatsDisplaySt(type: 'Students')));
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ChatsDisplaySt(type: 'Students')),
+                            );
                           },
                           child: Card(
                             color: Colors.deepPurple[50],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
                                   padding: EdgeInsets.all(10),
@@ -168,6 +188,7 @@ class HomePageMt extends StatelessWidget {
                                   child: Icon(
                                     Icons.boy,
                                     size: 55,
+                                    color: Colors.deepPurple,
                                   ),
                                 ),
                               ],
@@ -177,9 +198,7 @@ class HomePageMt extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Row(
                     children: [
                       Expanded(
@@ -194,10 +213,14 @@ class HomePageMt extends StatelessWidget {
                           },
                           child: Card(
                             color: Colors.deepPurple[50],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             child: const Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.all(10),
                                   child: Text("Admin Panel"),
                                 ),
                                 Padding(
@@ -205,15 +228,16 @@ class HomePageMt extends StatelessWidget {
                                   child: Icon(
                                     Icons.assignment_ind,
                                     size: 70,
+                                    color: Colors.deepPurple,
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
                         ),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
