@@ -10,7 +10,6 @@ class SubjectRegisterPage extends StatefulWidget {
 
 class _SubjectRegisterPageState extends State<SubjectRegisterPage> {
   final TextEditingController _subjectController = TextEditingController();
-  final TextEditingController _marksController = TextEditingController();
 
   bool _isLoading = false;
   String? _selectedClass;
@@ -128,17 +127,6 @@ class _SubjectRegisterPageState extends State<SubjectRegisterPage> {
             ),
             const SizedBox(height: 16.0),
 
-            // Marks Field
-            TextField(
-              controller: _marksController,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: "Marks",
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -172,13 +160,10 @@ class _SubjectRegisterPageState extends State<SubjectRegisterPage> {
     FocusScope.of(context).unfocus();
 
     String subjectName = _subjectController.text.trim();
-    String marksText = _marksController.text.trim();
-    int? marks = int.tryParse(marksText);
 
     if (_selectedClass == null ||
         _selectedSection == null ||
-        subjectName.isEmpty ||
-        marks == null) {
+        subjectName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text(
@@ -229,7 +214,6 @@ class _SubjectRegisterPageState extends State<SubjectRegisterPage> {
           // Add the new subject with marks
           subjects.add({
             'name': subjectName,
-            'marks': marks,
           });
 
           // Update Firestore with the new subject list
@@ -248,7 +232,6 @@ class _SubjectRegisterPageState extends State<SubjectRegisterPage> {
           );
 
           _subjectController.clear();
-          _marksController.clear();
         }
       } else {
         // Create a new document if it doesn't exist
@@ -256,7 +239,6 @@ class _SubjectRegisterPageState extends State<SubjectRegisterPage> {
           'subjects': [
             {
               'name': subjectName,
-              'marks': marks,
             },
           ],
         });
@@ -273,7 +255,6 @@ class _SubjectRegisterPageState extends State<SubjectRegisterPage> {
 
         // Clear the fields
         _subjectController.clear();
-        _marksController.clear();
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
