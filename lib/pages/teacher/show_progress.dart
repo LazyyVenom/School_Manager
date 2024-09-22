@@ -140,12 +140,6 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
               },
             ),
             const SizedBox(height: 16.0),
-            if (_selectedExam != null)
-              ElevatedButton(
-                onPressed: _fetchMarks,
-                child: const Text("Fetch Marks"),
-              ),
-            const SizedBox(height: 16.0),
             _isLoading
                 ? const CircularProgressIndicator()
                 : _marksData.isEmpty

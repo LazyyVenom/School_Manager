@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:school_manager/pages/students/leave_requets.dart';
+import 'package:school_manager/pages/teacher/show_progress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
 
@@ -139,6 +140,8 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildActivityCards(BuildContext context) {
+    CurrentUser _current_user =
+        Provider.of<CurrentUser>(context, listen: false);
     return Expanded(
       child: Column(
         children: [
@@ -153,7 +156,8 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ChatsDisplay(type: "Teachers"),
+                      builder: (context) =>
+                          const ChatsDisplay(type: "Teachers"),
                     ),
                   );
                 },
@@ -166,7 +170,8 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ChatsDisplay(type: 'Management'),
+                      builder: (context) =>
+                          const ChatsDisplay(type: 'Management'),
                     ),
                   );
                 },
@@ -182,7 +187,16 @@ class HomePage extends StatelessWidget {
                 title: "Check Progress",
                 icon: Icons.bar_chart,
                 onTap: () {
-                  
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DisplayStudentProgress(
+                        className: _current_user.className!,
+                        studentEmail: _current_user.gmail!,
+                        sectionName: _current_user.section!,
+                      ),
+                    ),
+                  );
                 },
               ),
               _buildActivityCard(
@@ -205,7 +219,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildActivityCard(BuildContext context, {
+  Widget _buildActivityCard(
+    BuildContext context, {
     required String title,
     required IconData icon,
     required VoidCallback onTap,
