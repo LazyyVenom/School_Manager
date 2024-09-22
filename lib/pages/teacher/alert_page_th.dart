@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:async/async.dart';
 import 'package:school_manager/notification_service.dart';
 
 class AlertPageTh extends StatefulWidget {
@@ -13,6 +14,7 @@ class AlertPageTh extends StatefulWidget {
 class _AlertPageThState extends State<AlertPageTh> {
   final NotificationService _notificationService = NotificationService();
   final TextEditingController _notificationController = TextEditingController();
+  StreamGroup<QuerySnapshot> _streamGroup = StreamGroup<QuerySnapshot>(); // Create a StreamGroup
 
   String? _selectedRole = 'management';
   String? _selectedClass;
@@ -21,7 +23,25 @@ class _AlertPageThState extends State<AlertPageTh> {
   @override
   void dispose() {
     _notificationController.dispose();
+    _streamGroup.close();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _updateStreams();
+  }
+
+  void _updateStreams() {
+    _streamGroup.add(_notificationService.getNotifications('all', 'all')); // Stream for all notifications
+
+    if (_selectedRole != 'management') {
+      _streamGroup.add(_notificationService.getNotifications(
+        _selectedClass ?? 'all',
+        _selectedSection ?? 'all',
+      )); // Stream for specific class/section notifications
+    }
   }
 
   @override
@@ -43,14 +63,7 @@ class _AlertPageThState extends State<AlertPageTh> {
             const SizedBox(height: 10),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _notificationService.getNotifications(
-                  _selectedRole == 'management'
-                      ? 'all'
-                      : (_selectedClass ?? 'all'),
-                  _selectedRole == 'management'
-                      ? 'all'
-                      : (_selectedSection ?? 'all'),
-                ),
+                stream: _streamGroup.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -225,12 +238,12 @@ class _AlertPageThState extends State<AlertPageTh> {
                 if (_notificationController.text.isNotEmpty) {
                   _notificationService.sendNotification(
                     selectedRole == 'management'
-                        ? 'management'
+                        ? 'manage'
                         : selectedRole == 'All'
                             ? 'all'
                             : (selectedClass ?? 'all'),
-                    selectedRole == 'management' || selectedRole == 'All'
-                        ? 'all'
+                    selectedRole == 'management'
+                        ? 'ment'
                         : (selectedSection ?? 'all'),
                     _notificationController.text,
                   );

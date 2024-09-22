@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:async/async.dart';
 import 'package:intl/intl.dart';
 import 'package:school_manager/notification_service.dart';
-import 'package:async/async.dart'; // Import the async package for StreamGroup
 
 class AlertPageMt extends StatefulWidget {
   const AlertPageMt({Key? key}) : super(key: key);
@@ -14,21 +14,43 @@ class AlertPageMt extends StatefulWidget {
 class _AlertPageMtState extends State<AlertPageMt> {
   final NotificationService _notificationService = NotificationService();
   final TextEditingController _notificationController = TextEditingController();
-  final _streamGroup = StreamGroup<QuerySnapshot>(); // Create a stream group
+  StreamGroup<QuerySnapshot> _streamGroup =
+      StreamGroup<QuerySnapshot>(); // Create a StreamGroup
+
+  String? _selectedRole = 'management';
 
   @override
   void initState() {
     super.initState();
-    // Add both streams to the group
-    _streamGroup.add(_notificationService.getNotifications('manage', 'ment'));
-    _streamGroup.add(_notificationService.getNotifications('all', 'all'));
+    _updateStreams();
   }
 
   @override
   void dispose() {
     _notificationController.dispose();
-    _streamGroup.close(); // Close the stream group
     super.dispose();
+  }
+
+  void _updateStreams() {
+    _streamGroup = StreamGroup<QuerySnapshot>();
+    _streamGroup.add(_notificationService.getNotifications(
+        'all', 'all')); // Stream for all notifications
+
+    if (_selectedRole != 'management') {
+      _streamGroup.add(
+        _notificationService.getNotifications(
+          'all',
+          'all',
+        ),
+      ); // Stream for specific class/section notifications
+    } else {
+      _streamGroup.add(
+        _notificationService.getNotifications(
+          'manage',
+          'ment',
+        ),
+      );
+    }
   }
 
   @override
@@ -50,7 +72,7 @@ class _AlertPageMtState extends State<AlertPageMt> {
             const SizedBox(height: 10),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _streamGroup.stream, // Listen to the combined stream
+                stream: _streamGroup.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -87,7 +109,8 @@ class _AlertPageMtState extends State<AlertPageMt> {
                             ),
                             title: Text(
                               notification['notification'] ?? 'No Title',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
                               "Added At: ${DateFormat('yyyy-MM-dd').format(notification['timestamp'].toDate())}",
@@ -95,7 +118,8 @@ class _AlertPageMtState extends State<AlertPageMt> {
                             ),
                             trailing: IconButton(
                               icon: Icon(Icons.delete, color: Colors.red[400]),
-                              onPressed: () => _showDeleteConfirmation(context, docId),
+                              onPressed: () =>
+                                  _showDeleteConfirmation(context, docId),
                             ),
                           ),
                         ),
@@ -117,22 +141,104 @@ class _AlertPageMtState extends State<AlertPageMt> {
   }
 
   void _showAddNotificationDialog(BuildContext context) {
+    String? selectedRole = 'management';
+    String? selectedClass;
+    String? selectedSection;
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Add Notification'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: _notificationController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Notification Details',
-                ),
-              ),
-            ],
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButton<String>(
+                    value: selectedRole,
+                    items: const [
+                      DropdownMenuItem(
+                          value: 'management', child: Text('Management')),
+                      DropdownMenuItem(value: 'All', child: Text('All')),
+                      DropdownMenuItem(
+                          value: 'Specific Classes',
+                          child: Text('Specific Classes')),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        selectedRole = value;
+                        selectedClass = null;
+                        selectedSection = null;
+                      });
+                    },
+                  ),
+                  if (selectedRole == 'Specific Classes')
+                    Column(
+                      children: [
+                        FutureBuilder<List<String>>(
+                          future: _fetchClasses(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const CircularProgressIndicator();
+                            }
+                            final classes = snapshot.data!;
+                            return DropdownButton<String>(
+                              value: selectedClass,
+                              hint: const Text('Select Class'),
+                              items: classes
+                                  .map((className) => DropdownMenuItem(
+                                        value: className,
+                                        child: Text(className),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedClass = value;
+                                  selectedSection = null;
+                                });
+                              },
+                            );
+                          },
+                        ),
+                        if (selectedClass != null)
+                          FutureBuilder<List<String>>(
+                            future: _fetchSections(selectedClass!),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const CircularProgressIndicator();
+                              }
+                              final sections = snapshot.data!;
+                              return DropdownButton<String>(
+                                value: selectedSection,
+                                hint: const Text('Select Section'),
+                                items: sections
+                                    .map((sectionName) => DropdownMenuItem(
+                                          value: sectionName,
+                                          child: Text(sectionName),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedSection = value;
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                      ],
+                    ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: _notificationController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Notification Details',
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
           actions: <Widget>[
             TextButton(
@@ -144,12 +250,23 @@ class _AlertPageMtState extends State<AlertPageMt> {
             TextButton(
               onPressed: () {
                 if (_notificationController.text.isNotEmpty) {
-                  _notificationService.sendNotification('management', 'ment', _notificationController.text);
+                  _notificationService.sendNotification(
+                    selectedRole == 'management'
+                        ? 'manage'
+                        : selectedRole == 'All'
+                            ? 'all'
+                            : (selectedClass ?? 'all'),
+                    selectedRole == 'management'
+                        ? 'ment'
+                        : (selectedSection ?? 'all'),
+                    _notificationController.text,
+                  );
                   Navigator.of(context).pop();
                   _notificationController.clear();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please enter notification details')),
+                    const SnackBar(
+                        content: Text('Please enter notification details')),
                   );
                 }
               },
@@ -161,13 +278,30 @@ class _AlertPageMtState extends State<AlertPageMt> {
     );
   }
 
+  Future<List<String>> _fetchClasses() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('classes')
+        .doc('School')
+        .get();
+    return List<String>.from(snapshot.data()?['classes'] ?? []);
+  }
+
+  Future<List<String>> _fetchSections(String selectedClass) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('classes')
+        .doc('School')
+        .get();
+    return List<String>.from(snapshot.data()?['sections'] ?? []);
+  }
+
   void _showDeleteConfirmation(BuildContext context, String docId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Delete Notification'),
-          content: const Text('Are you sure you want to delete this notification?'),
+          content:
+              const Text('Are you sure you want to delete this notification?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
