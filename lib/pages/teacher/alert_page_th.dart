@@ -28,107 +28,95 @@ class _AlertPageThState extends State<AlertPageTh> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: [
-            Column(
-              children: [
-                const SizedBox(height: 6),
-                Text(
-                  "All Activities",
-                  style: Theme.of(context).textTheme.headlineMedium,
+            const SizedBox(height: 8),
+            Text(
+              "All Activities",
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
+            ),
+            const Divider(thickness: 1),
+            const SizedBox(height: 10),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _notificationService.getNotifications(
+                  _selectedRole == 'management'
+                      ? 'all'
+                      : (_selectedClass ?? 'all'),
+                  _selectedRole == 'management'
+                      ? 'all'
+                      : (_selectedSection ?? 'all'),
                 ),
-                const SizedBox(height: 6),
-                const Divider(),
-                const SizedBox(height: 6),
-                Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: _notificationService.getNotifications(
-                      _selectedRole == 'management'
-                          ? 'all'
-                          : (_selectedClass ?? 'all'),
-                      _selectedRole == 'management'
-                          ? 'all'
-                          : (_selectedSection ?? 'all'),
-                    ),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(child: Text('No notifications found'));
-                      }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('No notifications found'));
+                  }
 
-                      final notifications = snapshot.data!.docs;
+                  final notifications = snapshot.data!.docs;
 
-                      return ListView.builder(
-                        itemCount: notifications.length,
-                        itemBuilder: (context, index) {
-                          var notification = notifications[index];
-                          var docId = notification.id;
+                  return ListView.builder(
+                    itemCount: notifications.length,
+                    itemBuilder: (context, index) {
+                      var notification = notifications[index];
+                      var docId = notification.id;
 
-                          return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Column(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(1),
-                                  color: Colors.deepPurple[50],
-                                  child: ListTile(
-                                    leading: Icon(
-                                      Icons.notifications,
-                                      color: Colors.deepPurple[300],
-                                      size: 32,
-                                    ),
-                                    title: Text(notification['notification'] ?? 'No Title'),
-                                    subtitle: Text(
-                                      "Added At: ${DateFormat('yyyy-MM-dd').format(notification['timestamp'].toDate())}",
-                                    ),
-                                    trailing: GestureDetector(
-                                      onTap: () {
-                                        _showDeleteConfirmation(context, docId);
-                                      },
-                                      child: Icon(
-                                        Icons.delete,
-                                        color: Colors.red[300],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.notifications,
+                              color: Colors.deepPurple[300],
+                              size: 32,
                             ),
-                          );
-                        },
+                            title: Text(
+                              notification['notification'] ?? 'No Title',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              "Added At: ${DateFormat('yyyy-MM-dd').format(notification['timestamp'].toDate())}",
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red[400]),
+                              onPressed: () => _showDeleteConfirmation(context, docId),
+                            ),
+                          ),
+                        ),
                       );
                     },
-                  ),
-                ),
-              ],
-            ),
-            Positioned(
-              bottom: 16,
-              right: 16,
-              child: FloatingActionButton(
-                onPressed: () {
-                  _showAddNotificationDialog(context);
+                  );
                 },
-                backgroundColor: Colors.deepPurple,
-                child: const Icon(Icons.add),
               ),
             ),
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddNotificationDialog(context),
+        backgroundColor: Colors.deepPurple,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
   void _showAddNotificationDialog(BuildContext context) {
-    // Local variables to handle state inside the dialog only
     String? selectedRole = 'management';
     String? selectedClass;
     String? selectedSection;
@@ -146,18 +134,9 @@ class _AlertPageThState extends State<AlertPageTh> {
                   DropdownButton<String>(
                     value: selectedRole,
                     items: const [
-                      DropdownMenuItem(
-                        value: 'management',
-                        child: Text('management'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'All',
-                        child: Text('All'),
-                      ),
-                      DropdownMenuItem(
-                        value: 'Specific Classes',
-                        child: Text('Specific Classes'),
-                      ),
+                      DropdownMenuItem(value: 'management', child: Text('Management')),
+                      DropdownMenuItem(value: 'All', child: Text('All')),
+                      DropdownMenuItem(value: 'Specific Classes', child: Text('Specific Classes')),
                     ],
                     onChanged: (value) {
                       setState(() {
@@ -167,58 +146,61 @@ class _AlertPageThState extends State<AlertPageTh> {
                       });
                     },
                   ),
-                  if (selectedRole == 'Specific Classes') ...[
-                    FutureBuilder<List<String>>(
-                      future: _fetchClasses(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const CircularProgressIndicator();
-                        }
-                        final classes = snapshot.data!;
-                        return DropdownButton<String>(
-                          value: selectedClass,
-                          hint: const Text('Select Class'),
-                          items: classes
-                              .map((className) => DropdownMenuItem(
-                                    value: className,
-                                    child: Text(className),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedClass = value;
-                              selectedSection = null;
-                            });
+                  if (selectedRole == 'Specific Classes')
+                    Column(
+                      children: [
+                        FutureBuilder<List<String>>(
+                          future: _fetchClasses(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const CircularProgressIndicator();
+                            }
+                            final classes = snapshot.data!;
+                            return DropdownButton<String>(
+                              value: selectedClass,
+                              hint: const Text('Select Class'),
+                              items: classes
+                                  .map((className) => DropdownMenuItem(
+                                        value: className,
+                                        child: Text(className),
+                                      ))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedClass = value;
+                                  selectedSection = null;
+                                });
+                              },
+                            );
                           },
-                        );
-                      },
-                    ),
-                    if (selectedClass != null)
-                      FutureBuilder<List<String>>(
-                        future: _fetchSections(selectedClass!),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
-                          }
-                          final sections = snapshot.data!;
-                          return DropdownButton<String>(
-                            value: selectedSection,
-                            hint: const Text('Select Section'),
-                            items: sections
-                                .map((sectionName) => DropdownMenuItem(
-                                      value: sectionName,
-                                      child: Text(sectionName),
-                                    ))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                selectedSection = value;
-                              });
+                        ),
+                        if (selectedClass != null)
+                          FutureBuilder<List<String>>(
+                            future: _fetchSections(selectedClass!),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData) {
+                                return const CircularProgressIndicator();
+                              }
+                              final sections = snapshot.data!;
+                              return DropdownButton<String>(
+                                value: selectedSection,
+                                hint: const Text('Select Section'),
+                                items: sections
+                                    .map((sectionName) => DropdownMenuItem(
+                                          value: sectionName,
+                                          child: Text(sectionName),
+                                        ))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedSection = value;
+                                  });
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
-                  ],
+                          ),
+                      ],
+                    ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: _notificationController,
@@ -256,9 +238,7 @@ class _AlertPageThState extends State<AlertPageTh> {
                   _notificationController.clear();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter notification details'),
-                    ),
+                    const SnackBar(content: Text('Please enter notification details')),
                   );
                 }
               },
@@ -270,18 +250,14 @@ class _AlertPageThState extends State<AlertPageTh> {
     );
   }
 
-  // Fetch list of classes from 'School' document
   Future<List<String>> _fetchClasses() async {
     final snapshot = await FirebaseFirestore.instance.collection('classes').doc('School').get();
-    List<String> classes = List<String>.from(snapshot.data()?['classes'] ?? []);
-    return classes;
+    return List<String>.from(snapshot.data()?['classes'] ?? []);
   }
 
-  // Fetch list of sections from 'School' document based on the selected class
   Future<List<String>> _fetchSections(String selectedClass) async {
     final snapshot = await FirebaseFirestore.instance.collection('classes').doc('School').get();
-    List<String> sections = List<String>.from(snapshot.data()?['sections'] ?? []);
-    return sections;
+    return List<String>.from(snapshot.data()?['sections'] ?? []);
   }
 
   void _showDeleteConfirmation(BuildContext context, String docId) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart'; // Ensure this imports CurrentUser
 import 'package:school_manager/assignment_service.dart';
@@ -21,7 +22,7 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
   @override
   void initState() {
     super.initState();
-    assignmentService = AssignmentService(); // Initialize assignment service
+    assignmentService = AssignmentService(); 
   }
 
   @override
@@ -59,7 +60,6 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
                           setState(() {
                             selectedCategory = categories[index];
                             // Debug print to check selected category
-                            print("Selected Category: $selectedCategory");
                           });
                         },
                         child: Chip(
@@ -115,10 +115,6 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
                         var assignment = assignments[index];
                         var assignmentType = assignment['type'];
 
-                        // Debug print to check assignment type and filtering logic
-                        print("Assignment Type: $assignmentType");
-
-                        // Filter based on the selected category
                         if (selectedCategory == 'All' ||
                             assignmentType == selectedCategory) {
                           return Padding(
@@ -141,7 +137,7 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
                                   ),
                                 ),
                                 subtitle: Text(
-                                  "Due Date: ${assignment['dueDate']?.toDate().toLocal()}",
+                                  "Due Date: ${DateFormat('yyyy-MM-dd').format(assignment['dueDate']!.toDate())}",
                                   style: TextStyle(
                                     color: Colors.grey[600],
                                   ),

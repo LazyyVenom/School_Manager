@@ -30,186 +30,157 @@ class HomePageTh extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _current_user = Provider.of<CurrentUser>(context, listen: false);
+
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              height: 95,
-              width: double.infinity,
+            Expanded(
+              flex: 0,
               child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 color: Colors.deepPurple[50],
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      Expanded(
-                        child: Text(
-                          "Welcome ${_current_user.name}",
-                          style: Theme.of(context).textTheme.headlineMedium,
-                        ),
-                      ),
                       Text(
-                        "Class Teacher ${_current_user.className} Std ${_current_user.section}",
-                        style: Theme.of(context).textTheme.headlineSmall,
+                        "Welcome, ${_current_user.name}",
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
+                            ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Class Teacher of ${_current_user.className} - Section ${_current_user.section}",
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(color: Colors.black87),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(Colors.deepPurple[50]),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple[50],
+                      foregroundColor: Colors.deepPurple,
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     onPressed: () {
-                      return;
+                      // Functionality to change password
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Change Password"),
-                    ),
+                    child: const Text("Change Password"),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(Colors.red[50]),
-                      foregroundColor:
-                          MaterialStatePropertyAll(Colors.red[400]),
-                      overlayColor: MaterialStatePropertyAll(Colors.red[100]),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[50],
+                      foregroundColor: Colors.red[400],
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     onPressed: () {
                       logout(context);
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text("Log Out"),
-                    ),
+                    child: const Text("Log Out"),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            const Divider(),
-            const SizedBox(height: 6),
+            const SizedBox(height: 20),
             Text(
               "Perform Tasks",
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
             ),
-            const SizedBox(height: 6),
-            const Divider(),
-            const SizedBox(height: 6),
+            const SizedBox(height: 16),
             Expanded(
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ChatsDisplay(
-                                        type: 'Management')));
-                          },
-                          child: Card(
-                              color: Colors.deepPurple[50],
-                              child: const Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Text("Contact Management"),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 8),
-                                    child: Icon(
-                                      Icons.manage_accounts,
-                                      size: 55,
-                                    ),
-                                  )
-                                ],
-                              )),
-                        ),
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ChatsDisplay(type: 'Students')));
-                          },
-                          child: Card(
-                            color: Colors.deepPurple[50],
-                            child: const Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text("Contact Students"),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 8),
-                                  child: Icon(
-                                    Icons.boy,
-                                    size: 55,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InkWell(
+                        child: _buildTaskCard(
+                          context,
+                          label: "Contact Management",
+                          icon: Icons.manage_accounts,
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const StudentRegisterPage()),
+                                builder: (context) =>
+                                    const ChatsDisplay(type: 'Management'),
+                              ),
                             );
                           },
-                          child: Card(
-                            color: Colors.deepPurple[50],
-                            child: const Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text("Create Student's Account"),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.assignment_ind,
-                                    size: 70,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
                         ),
                       ),
+                      const SizedBox(width: 10),
                       Expanded(
-                        child: InkWell(
+                        child: _buildTaskCard(
+                          context,
+                          label: "Contact Students",
+                          icon: Icons.boy,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const ChatsDisplay(type: 'Students'),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTaskCard(
+                          context,
+                          label: "Create Student's Account",
+                          icon: Icons.assignment_ind,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const StudentRegisterPage(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _buildTaskCard(
+                          context,
+                          label: "Teacher's Panel",
+                          icon: Icons.admin_panel_settings,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -218,24 +189,6 @@ class HomePageTh extends StatelessWidget {
                               ),
                             );
                           },
-                          child: Card(
-                            color: Colors.deepPurple[50],
-                            child: const Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text("Teacher's Panel"),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.admin_panel_settings,
-                                    size: 70,
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
                         ),
                       ),
                     ],
@@ -244,6 +197,37 @@ class HomePageTh extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTaskCard(BuildContext context,
+      {required String label, required IconData icon, required Function() onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        color: Colors.deepPurple[50],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Icon(icon, size: 55, color: Colors.deepPurple[300]),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+              ),
+            ],
+          ),
         ),
       ),
     );
