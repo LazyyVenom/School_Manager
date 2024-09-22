@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart'; // Ensure this imports CurrentUser
 import 'package:school_manager/assignment_service.dart';
-import 'package:school_manager/pages/students/assignment_details.dart';
+import 'package:school_manager/pages/students/assignment_details.dart'; // Import your assignment details page
 import 'package:school_manager/pages/teacher/assignment_helper_page.dart';
 
 class AssignmentPageTh extends StatefulWidget {
@@ -14,7 +14,7 @@ class AssignmentPageTh extends StatefulWidget {
 }
 
 class _AssignmentPageThState extends State<AssignmentPageTh> {
-  final List<String> categories = ['All', 'Assignments', 'Homework'];
+  final List<String> categories = ['All', 'Assignment', 'Homework'];
   String selectedCategory = 'All';
   late AssignmentService assignmentService;
 
@@ -37,11 +37,15 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
               const SizedBox(height: 6),
               Text(
                 "Assignments",
-                style: Theme.of(context).textTheme.headlineMedium,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
+                    ),
               ),
               const SizedBox(height: 6),
               const Divider(),
               const SizedBox(height: 6),
+              // Category selector UI
               SizedBox(
                 height: 50,
                 child: ListView.builder(
@@ -49,18 +53,31 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
                             selectedCategory = categories[index];
+                            // Debug print to check selected category
+                            print("Selected Category: $selectedCategory");
                           });
                         },
                         child: Chip(
                           label: Text(categories[index]),
+                          labelStyle: TextStyle(
+                            color: selectedCategory == categories[index]
+                                ? Colors.white
+                                : Colors.deepPurple,
+                          ),
                           backgroundColor: selectedCategory == categories[index]
-                              ? Colors.deepPurple[200]
+                              ? Colors.deepPurple
                               : Colors.deepPurple[50],
+                          shape: const StadiumBorder(
+                            side: BorderSide(
+                              color: Colors.deepPurple,
+                              width: 1.5,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -70,6 +87,7 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
               const SizedBox(height: 6),
               const Divider(),
               const SizedBox(height: 6),
+              // Assignment List
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: assignmentService.getAssignments(
@@ -95,25 +113,41 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
                       itemCount: assignments.length,
                       itemBuilder: (context, index) {
                         var assignment = assignments[index];
+                        var assignmentType = assignment['type'];
+
+                        // Debug print to check assignment type and filtering logic
+                        print("Assignment Type: $assignmentType");
+
                         // Filter based on the selected category
                         if (selectedCategory == 'All' ||
-                            assignment['type'] == selectedCategory) {
+                            assignmentType == selectedCategory) {
                           return Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Container(
-                              padding: const EdgeInsets.all(1),
-                              color: Colors.deepPurple[50],
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                               child: ListTile(
+                                contentPadding: const EdgeInsets.all(12),
                                 leading: Icon(
                                   Icons.bookmark,
                                   color: Colors.deepPurple[300],
                                 ),
-                                title: Text(assignment['assignment'] ?? 'No Title'),
+                                title: Text(
+                                  assignment['assignment'] ?? 'No Title',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 subtitle: Text(
                                   "Due Date: ${assignment['dueDate']?.toDate().toLocal()}",
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                  ),
                                 ),
                                 trailing: Icon(
-                                  Icons.arrow_circle_right,
+                                  Icons.arrow_forward_ios,
                                   color: Colors.deepPurple[300],
                                 ),
                                 onTap: () {
@@ -121,8 +155,10 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AssignmentDetailPage(
-                                        assignmentData: assignment.data() as Map<String, dynamic>,
+                                      builder: (context) =>
+                                          AssignmentDetailPage(
+                                        assignmentData: assignment.data()
+                                            as Map<String, dynamic>,
                                       ),
                                     ),
                                   );
@@ -147,7 +183,9 @@ class _AssignmentPageThState extends State<AssignmentPageTh> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddAssignmentPage()),
+                  MaterialPageRoute(
+                    builder: (context) => AddAssignmentPage(),
+                  ),
                 );
               },
               backgroundColor: Colors.deepPurple,
