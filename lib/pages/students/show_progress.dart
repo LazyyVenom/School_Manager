@@ -152,7 +152,6 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
   }
 
   // Function to build the Bar Chart
-  // Function to build the Bar Chart
   Widget _buildBarChart() {
     return BarChart(
       BarChartData(
@@ -162,20 +161,31 @@ class _DisplayStudentProgressState extends State<DisplayStudentProgress> {
             barRods: [
               BarChartRodData(
                 y: entry.value,
+                colors: [Colors.green],
+                width: 20, // Width of the bar
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  y: 100, // Max marks for the subject
+                  colors: [Colors.red.withOpacity(0.3)], // Background bar
+                ),
               ),
             ],
           );
         }).toList(),
         titlesData: FlTitlesData(
-          leftTitles: SideTitles(showTitles: true),
+          topTitles: SideTitles(showTitles: false),
+          leftTitles: SideTitles(showTitles: false),
           bottomTitles: SideTitles(
             showTitles: true,
             getTitles: (value) {
               return _marksData.keys.toList()[value.toInt()];
             },
+            interval: 1, // Ensure that all subjects are shown
+            rotateAngle: 45, // Rotate the titles for better readability
           ),
         ),
         borderData: FlBorderData(show: true),
+        gridData: FlGridData(show: true),
       ),
     );
   }
