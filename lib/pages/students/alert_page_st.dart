@@ -93,10 +93,6 @@ class _AlertPageState extends State<AlertPage> {
                               "Added At: ${DateFormat('yyyy-MM-dd').format(notification['timestamp'].toDate())}",
                               style: const TextStyle(fontSize: 12),
                             ),
-                            trailing: Icon(
-                              Icons.delete,
-                              color: Colors.red[400],
-                            ),
                           ),
                         ),
                       );

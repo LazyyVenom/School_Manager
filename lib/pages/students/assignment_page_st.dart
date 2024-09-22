@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/assignment_service.dart';
 import 'package:school_manager/pages/students/assignment_details.dart';
-import 'package:school_manager/pages/teacher/assignment_helper_page.dart';
 
 class AssignmentPage extends StatefulWidget {
   const AssignmentPage({super.key});
@@ -164,24 +163,6 @@ class _AssignmentPageState extends State<AssignmentPage> {
                 ),
               ),
             ],
-          ),
-          // Floating action button to add a new assignment
-          Positioned(
-            bottom: 16,
-            right: 16,
-            child: FloatingActionButton(
-              onPressed: () {
-                // Navigate to a page for adding assignments
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddAssignmentPage(),
-                  ),
-                );
-              },
-              backgroundColor: Colors.deepPurple,
-              child: const Icon(Icons.add),
-            ),
           ),
         ],
       ),
