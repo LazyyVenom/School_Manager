@@ -20,6 +20,17 @@ class _ChatPageState extends State<ChatPage> {
   final _chatService = ChatService();
 
   @override
+  void initState() {
+    super.initState();
+
+    // Mark all messages as read when this chat page is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
+      _chatService.markMessagesAsRead(currentUser.gmail!, widget.email);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
 
@@ -55,11 +66,13 @@ class _ChatPageState extends State<ChatPage> {
                   itemBuilder: (context, index) {
                     var messageData = messages[index].data() as Map<String, dynamic>;
                     var isCurrentUser = messageData['senderEmail'] == currentUser.gmail;
+                    var isNew = messageData['is_new'] ?? true;
 
                     return _buildMessageBubble(
                       messageData['message'],
                       isCurrentUser,
                       messageData['timestamp']?.toDate(),
+                      isNew,
                     );
                   },
                 );
@@ -72,14 +85,18 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildMessageBubble(String message, bool isCurrentUser, DateTime? timestamp) {
+  Widget _buildMessageBubble(String message, bool isCurrentUser, DateTime? timestamp, bool isNew) {
     return Align(
       alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 6.0),
         child: Container(
           decoration: BoxDecoration(
-            color: isCurrentUser ? Colors.deepPurple[100] : Colors.grey[300],
+            color: isCurrentUser
+                ? Colors.deepPurple[100]
+                : isNew
+                    ? Colors.orange[200] // Highlight new messages with a different color
+                    : Colors.grey[300],
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(isCurrentUser ? 12 : 0),
               topRight: Radius.circular(isCurrentUser ? 0 : 12),

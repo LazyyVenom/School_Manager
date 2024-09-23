@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chat_displayer_st.dart';
+import 'package:school_manager/chat/chat_displayer_unread.dart';
 import 'package:school_manager/pages/management/admin_panel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:school_manager/pages/login_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> logout(BuildContext context) async {
   final prefs = await SharedPreferences.getInstance();
@@ -31,96 +33,174 @@ class HomePageMt extends StatelessWidget {
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 75,
-              width: double.infinity,
-              child: Card(
-                color: Colors.deepPurple[50],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          "Welcome ${currentUser.name}",
-                          style: Theme.of(context).textTheme.headline5?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
-                              ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+      body: SingleChildScrollView(
+        // Make the body scrollable
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Welcome card (already exists)
+              SizedBox(
+                height: 75,
+                width: double.infinity,
+                child: Card(
+                  color: Colors.deepPurple[50],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            "Welcome ${currentUser.name}",
+                            style:
+                                Theme.of(context).textTheme.headline5?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.deepPurple,
+                                    ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                         ),
-                      ),
-                      Text(
-                        "Administrator",
-                        style: Theme.of(context).textTheme.subtitle1,
-                      ),
-                    ],
+                        Text(
+                          "Administrator",
+                          style: Theme.of(context).textTheme.subtitle1,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.deepPurple[50]),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.deepPurple[50]),
+                      ),
+                      onPressed: () {
+                        // Add functionality for changing password
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text("Change Password"),
+                      ),
                     ),
-                    onPressed: () {
-                      // Add functionality for changing password
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text("Change Password"),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.red[50]),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.red[400]),
+                        overlayColor:
+                            MaterialStateProperty.all(Colors.red[100]),
+                      ),
+                      onPressed: () {
+                        logout(context);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text("Log Out"),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Notification box for new messages
+              InkWell(
+                onTap: () {
+                  // Navigate to the list of users who sent messages
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NotificationListScreen(),
+                    ),
+                  );
+                },
+                child: Card(
+                  color: Colors.orange[50],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "New Messages",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            StreamBuilder<int>(
+                              stream: _getNewMessageCount(currentUser.gmail!),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return CircleAvatar(
+                                    radius: 18,
+                                    backgroundColor: Colors.red[400],
+                                    child: Text(
+                                      '${snapshot.data}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  return const CircleAvatar(
+                                    radius: 18,
+                                    backgroundColor: Colors.grey,
+                                    child: Text(
+                                      '0',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.red[50]),
-                      foregroundColor: MaterialStateProperty.all(Colors.red[400]),
-                      overlayColor: MaterialStateProperty.all(Colors.red[100]),
+              ),
+
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 16),
+              Text(
+                "Perform Tasks",
+                style: Theme.of(context).textTheme.headline6?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple,
                     ),
-                    onPressed: () {
-                      logout(context);
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.all(12.0),
-                      child: Text("Log Out"),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const Divider(),
-            const SizedBox(height: 16),
-            Text(
-              "Perform Tasks",
-              style: Theme.of(context).textTheme.headline6?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.deepPurple,
-                  ),
-            ),
-            const SizedBox(height: 10),
-            const Divider(),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Column(
+              ),
+              const SizedBox(height: 10),
+              const Divider(),
+              const SizedBox(height: 16),
+
+              // Existing functionality buttons
+              Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -206,8 +286,7 @@ class HomePageMt extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AdminPanel()),
+                                  builder: (context) => const AdminPanel()),
                             );
                           },
                           child: Card(
@@ -239,10 +318,38 @@ class HomePageMt extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  // Method to get the count of new messages from Firestore
+  Stream<int> _getNewMessageCount(String userEmail) {
+    return FirebaseFirestore.instance
+        .collection('chat_rooms')
+        .where('participants', arrayContains: userEmail)
+        .snapshots()
+        .map((snapshot) {
+      Set<String> uniqueSenders = {};
+
+      for (var doc in snapshot.docs) {
+        // Check if the messages array exists and has elements
+        if (doc['messages'] != null && doc['messages'].isNotEmpty) {
+          // Get the last message
+          var lastMessage = doc['messages'].last;
+
+          // Check if the last message is new and the receiver is the current user
+          if (lastMessage['is_new'] == true &&
+              lastMessage['receiverEmail'] == userEmail) {
+            uniqueSenders
+                .add(lastMessage['senderEmail']); // Add the sender to the set
+          }
+        }
+      }
+
+      return uniqueSenders.length; // Return the count of unique senders
+    });
   }
 }
