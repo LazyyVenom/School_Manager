@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:school_manager/additional_features.dart';
 
 class UserManagementPage extends StatefulWidget {
   final String role;
@@ -255,6 +258,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   void _showDeleteAccountDialog(BuildContext context, String userEmail) {
+    CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) {
@@ -264,7 +268,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           actions: [
             TextButton(
               onPressed: () {
-                _deleteAccount(userEmail);
+                _deleteAccount(userEmail, currentUser);
                 Navigator.of(context).pop();
               },
               child: const Text('Yes'),
@@ -281,7 +285,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
   void _showChangePasswordDialog(BuildContext context, String userEmail) {
     TextEditingController passwordController = TextEditingController();
-
+    CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
     showDialog(
       context: context,
       builder: (context) {
@@ -298,8 +302,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
                 String newPassword = passwordController.text.trim();
                 if (newPassword.isNotEmpty) {
                   await _changePassword(userEmail, newPassword);
-                  Navigator.of(context)
-                      .pop(); // Close dialog only after password change
+                  FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: currentUser.gmail!,
+                      password: currentUser.password!);
+                  Navigator.of(context).pop();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Please enter a password.')),
@@ -321,21 +327,36 @@ class _UserManagementPageState extends State<UserManagementPage> {
 // Change Password Method
   Future<void> _changePassword(String userEmail, String newPassword) async {
     try {
-      // Update password in Firestore
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userEmail)
+          .get();
+
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      String oldPassword = data['password'] as String;
+      // Now you can use oldPassword as needed
+
+      FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: userEmail, password: oldPassword);
+
+      User? user = FirebaseAuth.instance.currentUser;
+      await user!.updatePassword(newPassword);
+
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userEmail)
           .update({
-        'password': newPassword, // Assuming this is how you store passwords
+        'password': newPassword,
       });
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Password changed successfully!')),
       );
     } catch (error) {
-      print('Error changing password: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to change password.')),
       );
+      print('Error changing password: $error');
     }
   }
 
@@ -353,21 +374,43 @@ class _UserManagementPageState extends State<UserManagementPage> {
       );
     } catch (error) {
       print('Error disabling account: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to disable account.')),
+      );
     }
   }
 
 // Delete Account Method
-  Future<void> _deleteAccount(String userEmail) async {
+  Future<void> _deleteAccount(String userEmail, CurrentUser currentUser) async {
     try {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userEmail)
+          .get();
+
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      String oldPassword = data['password'] as String;
+      // Now you can use oldPassword as needed
+
+      FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: userEmail, password: oldPassword);
+
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userEmail)
           .delete();
+
+      User? user = FirebaseAuth.instance.currentUser;
+      await user!.delete();
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Account deleted successfully!')),
       );
     } catch (error) {
       print('Error deleting account: $error');
+    } finally {
+      FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: currentUser.gmail!, password: currentUser.password!);
     }
   }
 }
