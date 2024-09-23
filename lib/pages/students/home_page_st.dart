@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
+import 'package:school_manager/chat/chat_displayer_unread.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
+import 'package:school_manager/chat/chatter_helper.dart';
 import 'package:school_manager/pages/students/leave_requets.dart';
 import 'package:school_manager/pages/students/show_progress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,6 +38,90 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: [
             _buildWelcomeCard(context, _current_user),
+            const SizedBox(height: 16),
+
+            // Notification box for new messages
+            InkWell(
+              onTap: () {
+                // Navigate to the list of users who sent messages
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NotificationListScreen(),
+                  ),
+                );
+              },
+              child: Card(
+                color: Colors.orange[50],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "New Messages",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          StreamBuilder<int>(
+                            stream:
+                                getNewMessageCountStream(_current_user.gmail!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Colors.grey,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2.0,
+                                  ),
+                                );
+                              }
+
+                              if (snapshot.hasData) {
+                                final count = snapshot.data!;
+                                return CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor:
+                                      count > 0 ? Colors.red[400] : Colors.grey,
+                                  child: Text(
+                                    count > 0 ? '$count' : '0',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              } else {
+                                return const CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Colors.grey,
+                                  child: Text(
+                                    '0',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             _buildActionButtons(context),
             const SizedBox(height: 16),
