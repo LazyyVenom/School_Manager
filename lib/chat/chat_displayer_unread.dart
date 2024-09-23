@@ -24,9 +24,9 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Collect all chat rooms that contain unread messages
+        // Collect all chat rooms that contain the current user
         final chatRooms = snapshot.data!.docs.where((document) {
-          return document['participants'].contains(currentUser.gmail);
+          return (document['participants'] as List<dynamic>).contains(currentUser.gmail);
         }).toList();
 
         return ListView.builder(
@@ -41,15 +41,21 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   }
 
   Future<bool> _hasUnreadMessages(String chatRoomId, String currentUserEmail) async {
-    final messagesSnapshot = await FirebaseFirestore.instance
+    // Access the messages array in this chat room document
+    final chatRoomSnapshot = await FirebaseFirestore.instance
         .collection('chat_rooms')
         .doc(chatRoomId)
-        .collection('messages')
-        .where('is_new', isEqualTo: true)
-        .where('receiverEmail', isEqualTo: currentUserEmail)
         .get();
 
-    return messagesSnapshot.docs.isNotEmpty;
+    var messages = chatRoomSnapshot['messages'] as List<dynamic>?;
+
+    // Check if the messages array is not null and contains unread messages for the current user
+    if (messages != null) {
+      return messages.any((message) =>
+          message['is_new'] == true && message['receiverEmail'] == currentUserEmail);
+    }
+
+    return false; // No unread messages
   }
 
   Widget _buildChatListItem(DocumentSnapshot document, CurrentUser currentUser) {

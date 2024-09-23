@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/chat/chat_services.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class ChatPage extends StatefulWidget {
@@ -35,9 +34,7 @@ class _ChatPageState extends State<ChatPage> {
     CurrentUser currentUser = Provider.of<CurrentUser>(context, listen: false);
 
     // Stream of messages between the current user and the recipient
-    Stream<QuerySnapshot> messageStream = _chatService.getMessages(
-      currentUser.gmail!, widget.email,
-    );
+    Stream<List<Message>> messageStream = _chatService.getMessages(currentUser.gmail!, widget.email);
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
       body: Column(
         children: [
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<List<Message>>(
               stream: messageStream,
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -58,20 +55,24 @@ class _ChatPageState extends State<ChatPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                var messages = snapshot.data!.docs;
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No messages found'));
+                }
+
+                var messages = snapshot.data!;
 
                 return ListView.builder(
                   itemCount: messages.length,
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   itemBuilder: (context, index) {
-                    var messageData = messages[index].data() as Map<String, dynamic>;
-                    var isCurrentUser = messageData['senderEmail'] == currentUser.gmail;
-                    var isNew = messageData['is_new'] ?? true;
+                    var message = messages[index];
+                    var isCurrentUser = message.senderEmail == currentUser.gmail;
+                    var isNew = message.isNew;
 
                     return _buildMessageBubble(
-                      messageData['message'],
+                      message.message,
                       isCurrentUser,
-                      messageData['timestamp']?.toDate(),
+                      message.timestamp.toDate(),
                       isNew,
                     );
                   },

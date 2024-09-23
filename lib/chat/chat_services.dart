@@ -6,14 +6,14 @@ class Message {
   final String receiverEmail;
   final String message;
   final Timestamp timestamp;
-  bool isNew; // Add is_new flag
+  bool isNew;
 
   Message({
     required this.senderEmail,
     required this.receiverEmail,
     required this.timestamp,
     required this.message,
-    this.isNew = true, // Set default as true when a message is created
+    this.isNew = true,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,24 +22,22 @@ class Message {
       'receiverEmail': receiverEmail,
       'timestamp': timestamp,
       'message': message,
-      'is_new': isNew, // Add is_new field to Firestore
+      'is_new': isNew,
     };
   }
 
-  // Factory method to convert Firestore document into Message object
-  factory Message.fromDocument(DocumentSnapshot doc) {
+  factory Message.fromMap(Map<String, dynamic> map) {
     return Message(
-      senderEmail: doc['senderEmail'],
-      receiverEmail: doc['receiverEmail'],
-      timestamp: doc['timestamp'],
-      message: doc['message'],
-      isNew: doc['is_new'], // Read is_new flag from Firestore
+      senderEmail: map['senderEmail'],
+      receiverEmail: map['receiverEmail'],
+      timestamp: map['timestamp'],
+      message: map['message'],
+      isNew: map['is_new'],
     );
   }
 }
 
 class ChatService extends ChangeNotifier {
-  // Get instance of Firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Send Message
@@ -58,25 +56,32 @@ class ChatService extends ChangeNotifier {
     ids.sort();
     String chatRoomID = ids.join('_');
 
-    await _firestore
-        .collection('chat_rooms')
-        .doc(chatRoomID)
-        .collection('messages')
-        .add(newMessage.toMap());
+    // Add message to the messages array in the chat room document
+    await _firestore.collection('chat_rooms').doc(chatRoomID).set(
+      {
+        'messages': FieldValue.arrayUnion([newMessage.toMap()]),
+      },
+      SetOptions(merge: true), // Merge with existing data
+    );
   }
 
   // Get Messages Stream
-  Stream<QuerySnapshot> getMessages(String userId, String otherUserId) {
+  Stream<List<Message>> getMessages(String userId, String otherUserId) {
     List<String> ids = [userId, otherUserId];
     ids.sort();
     String chatRoomID = ids.join('_');
 
-    return _firestore
-        .collection('chat_rooms')
-        .doc(chatRoomID)
-        .collection('messages')
-        .orderBy('timestamp', descending: false)
-        .snapshots();
+    return _firestore.collection('chat_rooms').doc(chatRoomID).snapshots().map(
+      (docSnapshot) {
+        if (docSnapshot.exists && docSnapshot.data() != null) {
+          // Cast the data to a Map<String, dynamic>
+          Map<String, dynamic> data = docSnapshot.data() as Map<String, dynamic>;
+          List<dynamic> messageMaps = data['messages'] ?? [];
+          return messageMaps.map((map) => Message.fromMap(map)).toList();
+        }
+        return [];
+      },
+    );
   }
 
   // Mark all messages as read when the user views the chat
@@ -85,16 +90,24 @@ class ChatService extends ChangeNotifier {
     ids.sort();
     String chatRoomID = ids.join('_');
 
-    QuerySnapshot unreadMessages = await _firestore
-        .collection('chat_rooms')
-        .doc(chatRoomID)
-        .collection('messages')
-        .where('receiverEmail', isEqualTo: userId) // Only update messages for the receiver
-        .where('is_new', isEqualTo: true) // Only mark unread messages
-        .get();
+    // Fetch the chat room document
+    DocumentSnapshot chatRoomDoc = await _firestore.collection('chat_rooms').doc(chatRoomID).get();
+    if (chatRoomDoc.exists && chatRoomDoc.data() != null) {
+      // Cast the data to a Map<String, dynamic>
+      Map<String, dynamic> data = chatRoomDoc.data() as Map<String, dynamic>;
+      List<dynamic> messages = data['messages'] ?? [];
 
-    for (var doc in unreadMessages.docs) {
-      await doc.reference.update({'is_new': false}); // Mark message as read
+      for (var message in messages) {
+        if (message['receiverEmail'] == userId && message['is_new'] == true) {
+          // Update the is_new flag in the message
+          message['is_new'] = false; // Mark as read
+        }
+      }
+
+      // Update the messages array in Firestore
+      await _firestore.collection('chat_rooms').doc(chatRoomID).update({
+        'messages': messages,
+      });
     }
   }
 }
