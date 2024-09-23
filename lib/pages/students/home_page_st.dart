@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
+import 'package:school_manager/change_password.dart';
 import 'package:school_manager/chat/chat_displayer_unread.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:school_manager/chat/chatter_helper.dart';
@@ -183,7 +184,12 @@ class HomePage extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              // Functionality to change password
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChangePasswordPage(),
+                ),
+              );
             },
             child: const Text("Change Password"),
           ),

@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
+import 'package:school_manager/change_password.dart';
 import 'package:school_manager/chat/chat_displayer_st.dart';
 import 'package:school_manager/chat/chat_displayer_unread.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
@@ -54,10 +55,11 @@ class HomePageTh extends StatelessWidget {
                     children: [
                       Text(
                         "Welcome, ${_current_user.name}",
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.deepPurple,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.deepPurple,
+                                ),
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -86,7 +88,12 @@ class HomePageTh extends StatelessWidget {
                       ),
                     ),
                     onPressed: () {
-                      // Functionality to change password
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChangePasswordPage(),
+                        ),
+                      );
                     },
                     child: const Text("Change Password"),
                   ),
@@ -110,7 +117,9 @@ class HomePageTh extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16,),
+            const SizedBox(
+              height: 16,
+            ),
             InkWell(
               onTap: () {
                 // Navigate to the list of users who sent messages
@@ -288,7 +297,9 @@ class HomePageTh extends StatelessWidget {
   }
 
   Widget _buildTaskCard(BuildContext context,
-      {required String label, required IconData icon, required Function() onTap}) {
+      {required String label,
+      required IconData icon,
+      required Function() onTap}) {
     return InkWell(
       onTap: onTap,
       child: Card(
