@@ -51,7 +51,7 @@ class AuthGate extends StatelessWidget {
                 String? className;
                 String? section;
 
-                if (role != 'management') {
+                if (role != 'management' || role != 'nurse') {
                   className = userData['class'];
                   section = userData['section'];
                 } 

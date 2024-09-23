@@ -132,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
           String? className;
           String? section;
 
-          if (role != 'management') {
+          if (role != 'management' || role != 'nurse') {
             className = userDoc['class'] ?? '';
             section = userDoc['section'] ?? '';
           }
