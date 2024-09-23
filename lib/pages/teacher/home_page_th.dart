@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
+import 'package:school_manager/chat/chat_displayer_st.dart';
 import 'package:school_manager/chat/chat_displayer_unread.dart';
 import 'package:school_manager/chat/chats_displayer.dart';
 import 'package:school_manager/chat/chatter_helper.dart';
@@ -109,6 +110,7 @@ class HomePageTh extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 16,),
             InkWell(
               onTap: () {
                 // Navigate to the list of users who sent messages
@@ -231,7 +233,7 @@ class HomePageTh extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    const ChatsDisplay(type: 'Students'),
+                                    const ChatsDisplaySt(type: 'Students'),
                               ),
                             );
                           },
