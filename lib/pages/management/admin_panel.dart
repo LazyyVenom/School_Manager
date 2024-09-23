@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:school_manager/pages/management/class_register.dart";
 import "package:school_manager/pages/management/display_management.dart";
+import "package:school_manager/pages/management/manage_accounts.dart";
 import "package:school_manager/pages/management/management_register.dart";
 import "package:school_manager/pages/management/nurse_register.dart";
 import "package:school_manager/pages/management/section_register.dart";
@@ -59,6 +60,11 @@ class _AdminPanelState extends State<AdminPanel> {
             CreatorWidget(
               title: "Create Management Account",
               registerPage: ManagementRegisterPage(),
+              icon: Icons.manage_accounts,
+            ),
+            CreatorWidget(
+              title: "Manage Accounts",
+              registerPage: RoleSelectionWidget(),
               icon: Icons.manage_accounts,
             ),
           ],
