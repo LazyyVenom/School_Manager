@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:school_manager/auth/auth_service.dart';
+import 'package:school_manager/dashboards/nurse_dashboard.dart';
 import 'package:school_manager/dashboards/student_dashboard.dart';
 import 'package:school_manager/dashboards/teacher_dashboard.dart';
 import 'package:school_manager/dashboards/management_dashboard.dart';
@@ -160,6 +161,12 @@ class _LoginPageState extends State<LoginPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => const ManagementDashboard()),
+            );
+          } else if (role == 'nurse') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const NurseDashboard()),
             );
           } else {
             throw Exception("Unknown role: $role");

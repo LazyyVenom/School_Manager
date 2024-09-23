@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_manager/dashboards/nurse_dashboard.dart';
 import 'package:school_manager/dashboards/student_dashboard.dart';
 import 'package:school_manager/dashboards/teacher_dashboard.dart';
 import 'package:school_manager/dashboards/management_dashboard.dart';
@@ -73,6 +74,8 @@ class AuthGate extends StatelessWidget {
                   return const TeacherDashboard();
                 } else if (role == 'student') {
                   return const StudentDashboard();
+                } else if (role == 'nurse') {
+                  return const NurseDashboard();
                 } else {
                   return const Center(
                     child: Text("Unknown role."),
