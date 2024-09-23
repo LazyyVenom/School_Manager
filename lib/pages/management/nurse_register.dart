@@ -122,6 +122,8 @@ class _NurseRegisterPageState extends State<NurseRegisterPage> {
         'name': name,
         'password': password,
         'role': 'nurse',
+        'class': 'nurse',
+        'section': 'nurse',
       });
 
       await authService.signOut();

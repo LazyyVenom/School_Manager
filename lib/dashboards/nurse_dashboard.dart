@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_manager/pages/management/alert_page_mt.dart';
-import 'package:school_manager/pages/management/home_page_mt.dart';
+import 'package:school_manager/pages/nurse/home_page_nr.dart';
 
 class NurseDashboard extends StatefulWidget {
   const NurseDashboard({
@@ -14,7 +14,7 @@ class NurseDashboard extends StatefulWidget {
 class NurseDashboardState extends State<NurseDashboard> {
   int currentPage = 0;
   List<Widget> pages = const [
-    HomePageMt(),
+    HomePageNurse(),
     AlertPageMt(),
   ];
 
