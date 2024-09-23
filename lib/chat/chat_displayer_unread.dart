@@ -12,117 +12,103 @@ class NotificationListScreen extends StatefulWidget {
 }
 
 class _NotificationListScreenState extends State<NotificationListScreen> {
-  Widget _buildChatList(CurrentUser currentUser) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('chat_rooms').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error loading chats.'));
-        }
+  Future<List<Map<String, dynamic>>> _fetchUnreadMessages(CurrentUser currentUser) async {
+    Set<String> uniqueSenders = {};
 
+    var chatRoomsSnapshot = await FirebaseFirestore.instance.collection('chat_rooms').get();
+    List<Map<String, dynamic>> unreadMessagesList = [];
+
+    for (var doc in chatRoomsSnapshot.docs) {
+      String chatRoomId = doc.id;
+      var messages = doc['messages'] as List<dynamic>?;
+
+      if (messages != null && messages.isNotEmpty) {
+        var lastMessage = messages.last;
+
+        if (lastMessage['is_new'] == true && lastMessage['receiverEmail'] == currentUser.gmail) {
+          uniqueSenders.add(lastMessage['senderEmail']);
+          unreadMessagesList.add({
+            'otherUserEmail': lastMessage['senderEmail'],
+            'chatRoomId': chatRoomId,
+          });
+        }
+      }
+    }
+
+    return unreadMessagesList;
+  }
+
+  Widget _buildChatList(CurrentUser currentUser) {
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _fetchUnreadMessages(currentUser),
+      builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // Collect all chat rooms that contain the current user
-        final chatRooms = snapshot.data!.docs.where((document) {
-          return (document['participants'] as List<dynamic>).contains(currentUser.gmail);
-        }).toList();
+        if (snapshot.hasError) {
+          return const Center(child: Text('Error loading chats.'));
+        }
 
-        return ListView.builder(
-          itemCount: chatRooms.length,
+        final unreadMessagesList = snapshot.data ?? [];
+
+        return ListView.separated(
+          itemCount: unreadMessagesList.length,
+          separatorBuilder: (context, index) => const Divider(height: 1),
           itemBuilder: (context, index) {
-            final chatRoom = chatRooms[index];
-            return _buildChatListItem(chatRoom, currentUser);
+            final chatInfo = unreadMessagesList[index];
+            return _buildChatListItem(chatInfo['otherUserEmail'], chatInfo['chatRoomId'], currentUser);
           },
         );
       },
     );
   }
 
-  Future<bool> _hasUnreadMessages(String chatRoomId, String currentUserEmail) async {
-    // Access the messages array in this chat room document
-    final chatRoomSnapshot = await FirebaseFirestore.instance
-        .collection('chat_rooms')
-        .doc(chatRoomId)
-        .get();
-
-    var messages = chatRoomSnapshot['messages'] as List<dynamic>?;
-
-    // Check if the messages array is not null and contains unread messages for the current user
-    if (messages != null) {
-      return messages.any((message) =>
-          message['is_new'] == true && message['receiverEmail'] == currentUserEmail);
-    }
-
-    return false; // No unread messages
-  }
-
-  Widget _buildChatListItem(DocumentSnapshot document, CurrentUser currentUser) {
-    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-    // Assuming the other user's email can be fetched from participants
-    String otherUserEmail = (data['participants'] as List<dynamic>).firstWhere(
-      (email) => email != currentUser.gmail,
-    );
-
-    return FutureBuilder<bool>(
-      future: _hasUnreadMessages(document.id, currentUser.gmail!),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox.shrink(); // or a loading indicator
-        }
-
-        if (snapshot.hasError) {
-          return const SizedBox.shrink(); // handle error as needed
-        }
-
-        // Only show the chat if there are unread messages
-        if (snapshot.data == true) {
-          return Card(
-            margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
-            elevation: 1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: ListTile(
-              tileColor: Colors.deepPurple[50],
-              contentPadding: const EdgeInsets.symmetric(vertical: 3, horizontal: 16),
-              leading: CircleAvatar(
-                backgroundColor: Colors.deepPurple[100],
-                child: Icon(
-                  Icons.chat,
-                  color: Colors.deepPurple[400],
-                ),
+  Widget _buildChatListItem(String otherUserEmail, String chatRoomId, CurrentUser currentUser) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ListTile(
+        tileColor: Colors.deepPurple[50],
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        leading: CircleAvatar(
+          backgroundColor: Colors.deepPurple[100],
+          child: Icon(
+            Icons.chat,
+            color: Colors.deepPurple[400],
+          ),
+        ),
+        title: Text(
+          otherUserEmail,
+          style: Theme.of(context).textTheme.headline6?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple[800],
               ),
-              title: Text(
-                otherUserEmail,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+        ),
+        subtitle: Text(
+          'You have unread messages',
+          style: Theme.of(context).textTheme.bodyText2?.copyWith(color: Colors.grey[600]),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          color: Colors.deepPurple[400],
+          size: 20,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ChatPage(
+                type: 'Chat with $otherUserEmail',
+                email: otherUserEmail,
               ),
-              trailing: Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.deepPurple[400],
-                size: 20,
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatPage(
-                      type: 'Chat with $otherUserEmail',
-                      email: otherUserEmail,
-                    ),
-                  ),
-                );
-              },
             ),
           );
-        }
-
-        return const SizedBox.shrink(); // Hide chat if no unread messages
-      },
+        },
+      ),
     );
   }
 
@@ -133,6 +119,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notifications'),
+        centerTitle: true,
+        backgroundColor: Colors.deepPurple,
       ),
       body: _buildChatList(currentUser),
     );

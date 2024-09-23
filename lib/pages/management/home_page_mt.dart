@@ -147,13 +147,12 @@ class HomePageMt extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            FutureBuilder<int>(
-                              future: getNewMessageCount(currentUser
-                                  .gmail!), // Using Future instead of Stream
+                            StreamBuilder<int>(
+                              stream:
+                                  getNewMessageCountStream(currentUser.gmail!),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  // Show loading state while fetching the data
                                   return const CircleAvatar(
                                     radius: 18,
                                     backgroundColor: Colors.grey,
@@ -162,14 +161,17 @@ class HomePageMt extends StatelessWidget {
                                       strokeWidth: 2.0,
                                     ),
                                   );
-                                } else if (snapshot.hasData &&
-                                    snapshot.data! > 0) {
-                                  // Display the unique sender count when data is available
+                                }
+
+                                if (snapshot.hasData) {
+                                  final count = snapshot.data!;
                                   return CircleAvatar(
                                     radius: 18,
-                                    backgroundColor: Colors.red[400],
+                                    backgroundColor: count > 0
+                                        ? Colors.red[400]
+                                        : Colors.grey,
                                     child: Text(
-                                      '${snapshot.data}',
+                                      count > 0 ? '$count' : '0',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -177,7 +179,6 @@ class HomePageMt extends StatelessWidget {
                                     ),
                                   );
                                 } else {
-                                  // Show '0' if no new messages or data is not available
                                   return const CircleAvatar(
                                     radius: 18,
                                     backgroundColor: Colors.grey,
@@ -193,7 +194,7 @@ class HomePageMt extends StatelessWidget {
                               },
                             ),
                           ],
-                        ),
+                        )
                       ],
                     ),
                   ),
@@ -340,35 +341,34 @@ class HomePageMt extends StatelessWidget {
     );
   }
 
-  // Method to get the count of new messages from Firestore
-  Future<int> getNewMessageCount(String userEmail) async {
+  Stream<int> getNewMessageCountStream(String userEmail) async* {
     Set<String> uniqueSenders = {};
 
-    // Fetch all chat rooms once
-    var chatRoomsSnapshot =
-        await FirebaseFirestore.instance.collection('chat_rooms').get();
+    // Listen for changes in the chat_rooms collection
+    await for (var snapshot
+        in FirebaseFirestore.instance.collection('chat_rooms').snapshots()) {
+      uniqueSenders.clear(); // Clear the previous senders
 
-    for (var doc in chatRoomsSnapshot.docs) {
-      String chatRoomId = doc.id;
+      for (var doc in snapshot.docs) {
+        String chatRoomId = doc.id;
 
-      if (chatRoomId.contains(userEmail)) {
-        // Access the messages array in this chat room document
-        var messages = doc['messages'] as List<dynamic>?;
+        if (chatRoomId.contains(userEmail)) {
+          // Access the messages array in this chat room document
+          var messages = doc['messages'] as List<dynamic>?;
 
-        // Check if messages are not null or empty
-        if (messages != null && messages.isNotEmpty) {
-          // Get the last message from the messages array
-          var lastMessage = messages.last;
+          if (messages != null && messages.isNotEmpty) {
+            var lastMessage = messages.last;
 
-          // Check if the last message is new and the receiver is the current user
-          if (lastMessage['is_new'] == true &&
-              lastMessage['receiverEmail'] == userEmail) {
-            uniqueSenders
-                .add(lastMessage['senderEmail']); // Add sender to the set
+            if (lastMessage['is_new'] == true &&
+                lastMessage['receiverEmail'] == userEmail) {
+              uniqueSenders.add(lastMessage['senderEmail']);
+            }
           }
         }
       }
+
+      // Yield the count of unique senders
+      yield uniqueSenders.length;
     }
-    return uniqueSenders.length; // Return the count of unique senders
   }
 }
