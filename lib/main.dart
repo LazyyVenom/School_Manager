@@ -6,7 +6,6 @@ import 'package:school_manager/firebase_options.dart';
 import 'package:school_manager/additional_features.dart';
 import 'package:provider/provider.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
